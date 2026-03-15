@@ -1,7 +1,8 @@
-import "./globals.css";
+﻿import "./globals.css";
+import { AuthProvider } from "@/context/AuthContext";
 
 export const metadata = {
-  title: "Ride Lanka — Trip Planner",
+  title: "Ride Lanka - Trip Planner",
   description: "Plan trips within Sri Lanka with Ride Lanka.",
 };
 
@@ -16,10 +17,8 @@ export default function RootLayout({ children }) {
           rel="stylesheet"
         />
       </head>
-      <body
-        className="antialiased"
-      >
-        {children}
+      <body className="antialiased">
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );
