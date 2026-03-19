@@ -20,7 +20,7 @@ async function safeFetch(url, options) {
             `Network request failed for ${url}. ` +
             `Check that your backend is running and reachable at NEXT_PUBLIC_BACKEND_URL=${BACKEND} (from .env.local), ` +
             `and that it allows requests from this app (CORS).`;
-        const err = new Error(e?.message ? `${e.message}. ${hint}` : hint);
+        const err = new Error(e ? .message ? `${e.message}. ${hint}` : hint);
         err.cause = e;
         throw err;
     }
@@ -55,6 +55,17 @@ export async function refreshRecommendations(token) {
     const res = await safeFetch(url, {
         method: "POST",
         headers: await authHeaders(token),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
+}
+
+export async function generateTripPlan(token, { trip_name, trip_date, stop_count, favorites }) {
+    const url = `${BACKEND}/api/users/trips/plan`;
+    const res = await safeFetch(url, {
+        method: "POST",
+        headers: await authHeaders(token),
+        body: JSON.stringify({ trip_name, trip_date, stop_count, favorites }),
     });
     if (!res.ok) throw new Error(await res.text());
     return res.json();

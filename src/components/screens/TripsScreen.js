@@ -1,40 +1,86 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useState } from "react";
 import Sidebar from "../Sidebar";
+import { useAuth } from "@/context/AuthContext";
+import { generateTripPlan } from "@/lib/api";
+
+const FAVORITE_OPTIONS = [
+  { id: "culture", label: "Culture" },
+  { id: "hiking", label: "Hiking" },
+  { id: "beach", label: "Beach" },
+  { id: "wildlife", label: "Wildlife" },
+  { id: "nature", label: "Nature" },
+  { id: "food", label: "Food" },
+  { id: "adventure", label: "Adventure" },
+  { id: "dance", label: "Dance" },
+];
 
 export default function TripsScreen({ active, showScreen }) {
+  const { token } = useAuth();
+
   const trips = [
-    { title: "Maldives Honeymoon", img: "https://images.unsplash.com/photo-1573843981267-be1999ff37cd?w=300&q=80", dates: "Mar 15 – Mar 22, 2026", travelers: "2 travelers", budget: "$3,408", progress: 35, status: "upcoming", statusLabel: "Upcoming" },
-    { title: "Greek Islands Tour", img: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=300&q=80", dates: "Feb 28 – Mar 8, 2026", travelers: "4 travelers", budget: "$5,200", progress: 80, status: "active", statusLabel: "Active" },
-    { title: "Bali Family Retreat", img: "https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=300&q=80", dates: "Dec 20 – Dec 30, 2025", travelers: "5 travelers", budget: "$4,100", progress: 100, status: "completed", statusLabel: "Completed" },
+    { title: "Maldives Honeymoon", img: "https://images.unsplash.com/photo-1573843981267-be1999ff37cd?w=300&q=80", dates: "Mar 15 - Mar 22, 2026", travelers: "2 travelers", budget: "$3,408", progress: 35, status: "upcoming", statusLabel: "Upcoming" },
+    { title: "Greek Islands Tour", img: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=300&q=80", dates: "Feb 28 - Mar 8, 2026", travelers: "4 travelers", budget: "$5,200", progress: 80, status: "active", statusLabel: "Active" },
+    { title: "Bali Family Retreat", img: "https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=300&q=80", dates: "Dec 20 - Dec 30, 2025", travelers: "5 travelers", budget: "$4,100", progress: 100, status: "completed", statusLabel: "Completed" },
   ];
 
-  const [mode, setMode] = useState("list"); // "list" | "new"
+  const [mode, setMode] = useState("list");
   const [tripName, setTripName] = useState("");
-  const [location, setLocation] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [travelers, setTravelers] = useState(1);
-  const [stopDraft, setStopDraft] = useState("");
-  const [stops, setStops] = useState([
-    { name: "Colombo", note: "Arrival + hotel" },
-    { name: "Kandy", note: "Temple of the Tooth" },
-    { name: "Nuwara Eliya", note: "Tea country" },
-  ]);
+  const [tripDate, setTripDate] = useState("");
+  const [stopCount, setStopCount] = useState(3);
+  const [favorites, setFavorites] = useState(["hiking", "dance"]);
+  const [plannedStops, setPlannedStops] = useState([]);
+  const [aiSource, setAiSource] = useState("");
+  const [loadingPlan, setLoadingPlan] = useState(false);
+  const [error, setError] = useState("");
 
   const mapTitle = useMemo(() => {
-    const safeLocation = location.trim();
-    if (safeLocation) return safeLocation;
-    if (stops.length > 0) return `${stops[0].name} route`;
-    return "Select a location";
-  }, [location, stops]);
+    const safeName = tripName.trim();
+    if (safeName) return safeName;
+    return "AI trip preview";
+  }, [tripName]);
 
-  function addStop() {
-    const name = stopDraft.trim();
-    if (!name) return;
-    setStops((prev) => [...prev, { name, note: "" }]);
-    setStopDraft("");
+  function toggleFavorite(id) {
+    setFavorites((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+  }
+
+  async function handleGeneratePlan() {
+    if (!tripName.trim()) {
+      setError("Please enter a trip name.");
+      return;
+    }
+    if (!tripDate) {
+      setError("Please select a trip date.");
+      return;
+    }
+    if (favorites.length === 0) {
+      setError("Select at least one favorite style.");
+      return;
+    }
+    if (!token) {
+      setError("Please sign in again to generate a trip plan.");
+      return;
+    }
+
+    setLoadingPlan(true);
+    setError("");
+
+    try {
+      const result = await generateTripPlan(token, {
+        trip_name: tripName.trim(),
+        trip_date: tripDate,
+        stop_count: stopCount,
+        favorites,
+      });
+
+      setPlannedStops(Array.isArray(result?.stops) ? result.stops : []);
+      setAiSource(result?.source || "gemini");
+    } catch (e) {
+      setError(e?.message || "Could not generate trip plan.");
+    } finally {
+      setLoadingPlan(false);
+    }
   }
 
   return (
@@ -95,160 +141,128 @@ export default function TripsScreen({ active, showScreen }) {
                     <div className={`trip-status status-${t.status}`}>{t.statusLabel}</div>
                   </div>
                 ))}
-                <h3 style={{ fontSize: 18, fontWeight: 700, margin: "24px 0 16px" }}>Greek Islands — Day by Day</h3>
-                <div className="itinerary-day">
-                  <div className="day-header">
-                    <span className="day-badge">Day 1</span>
-                    <h4>Arrival in Athens</h4>
-                    <span style={{ marginLeft: "auto", fontSize: 12, color: "var(--gray-400)" }}>Feb 28, 2026</span>
-                  </div>
-                  {[
-                    { time: "09:00", title: "Athens International Airport", desc: "Arrive & collect luggage · Transfer to hotel" },
-                    { time: "13:00", title: "Lunch at Monastiraki Square", desc: "Traditional Greek cuisine · Avg. €25/person" },
-                    { time: "15:00", title: "Acropolis Museum Visit", desc: "Duration: 2 hours · Tickets: €20" },
-                    { time: "20:00", title: "Check-in: Hotel Grande Bretagne", desc: "4 nights booked · Confirmation #HGB-4892" },
-                  ].map((a, i) => (
-                    <div key={i} className="activity-item">
-                      <div className="activity-time">{a.time}</div>
-                      <div className="activity-dot" />
-                      <div className="activity-info"><h5>{a.title}</h5><p>{a.desc}</p></div>
-                    </div>
-                  ))}
-                </div>
-                <div className="itinerary-day">
-                  <div className="day-header">
-                    <span className="day-badge">Day 2</span>
-                    <h4>Santorini Day Trip</h4>
-                    <span style={{ marginLeft: "auto", fontSize: 12, color: "var(--gray-400)" }}>Mar 1, 2026</span>
-                  </div>
-                  {[
-                    { time: "07:30", title: "Ferry to Santorini", desc: "Piraeus Port · 8hr journey · Economy class" },
-                    { time: "15:30", title: "Oia Village Exploration", desc: "Blue-domed churches, white-washed alleys" },
-                    { time: "19:30", title: "Sunset at Oia Castle", desc: "Most famous sunset spot in the world 🌅" },
-                  ].map((a, i) => (
-                    <div key={i} className="activity-item">
-                      <div className="activity-time">{a.time}</div>
-                      <div className="activity-dot" />
-                      <div className="activity-info"><h5>{a.title}</h5><p>{a.desc}</p></div>
-                    </div>
-                  ))}
-                </div>
               </div>
               <div className="map-panel">
                 <div className="map-placeholder">
                   <div className="icon">🗺️</div>
                   <strong>Trip Map</strong>
-                  <span style={{ fontSize: 12 }}>Greek Islands Route</span>
-                  <div style={{ marginTop: 20, display: "flex", flexDirection: "column", gap: 10, padding: "0 24px", width: "100%" }}>
-                    {["Athens — Day 1–4", "Santorini — Day 2 (day trip)", "Mykonos — Day 5–8", "Rhodes — Day 9 (return)"].map((s, i) => (
-                      <div key={i} style={{ background: "rgba(255,255,255,0.6)", borderRadius: 8, padding: "10px 14px", fontSize: 12 }}>
-                        <strong>{s.split("—")[0].trim()}</strong> — {s.split("—")[1]?.trim()}
-                      </div>
-                    ))}
-                  </div>
+                  <span style={{ fontSize: 12 }}>Select New Trip to generate a route</span>
                 </div>
               </div>
             </div>
           ) : (
-            <div className="new-trip-layout">
+            <div className="new-trip-layout" style={{ display: "grid", gridTemplateColumns: "1fr 420px", gap: 22 }}>
               <div className="new-trip-map">
-                <div className="map-placeholder">
-                  <div className="icon">📍</div>
-                  <strong>Map Preview</strong>
-                  <span style={{ fontSize: 12 }}>{mapTitle}</span>
-                  <div style={{ marginTop: 18, display: "flex", flexDirection: "column", gap: 10, padding: "0 24px", width: "100%" }}>
-                    {stops.map((s, i) => (
-                      <div key={`${s.name}-${i}`} style={{ background: "rgba(255,255,255,0.6)", borderRadius: 8, padding: "10px 14px", fontSize: 12 }}>
-                        <strong>Stop {i + 1}:</strong> {s.name}{s.note ? ` · ${s.note}` : ""}
-                      </div>
-                    ))}
+                <div className="map-panel" style={{ position: "relative", top: 0, height: "100%", minHeight: 580 }}>
+                  <div className="map-placeholder" style={{ alignItems: "stretch", justifyContent: "flex-start", padding: 20 }}>
+                    <div style={{ textAlign: "center", marginBottom: 12 }}>
+                      <div className="icon" style={{ marginBottom: 4 }}>📍</div>
+                      <strong>Map Preview</strong>
+                      <div style={{ fontSize: 12 }}>{mapTitle}</div>
+                      {aiSource && <div style={{ marginTop: 6, fontSize: 11 }}>AI source: {aiSource}</div>}
+                    </div>
+
+                    <div style={{ display: "flex", flexDirection: "column", gap: 10, width: "100%" }}>
+                      {plannedStops.length === 0 ? (
+                        <div style={{ background: "rgba(255,255,255,0.6)", borderRadius: 10, padding: 14, fontSize: 12, textAlign: "center" }}>
+                          Generate the plan to view mapped stops.
+                        </div>
+                      ) : (
+                        plannedStops.map((s, i) => (
+                          <div key={`${s.name}-${i}`} style={{ background: "rgba(255,255,255,0.75)", borderRadius: 8, padding: "10px 14px", fontSize: 12 }}>
+                            <div style={{ fontWeight: 800 }}>Stop {s.stop_order || i + 1}: {s.name}</div>
+                            <div style={{ marginTop: 2 }}>{s.description}</div>
+                            <div style={{ marginTop: 4, color: "var(--gray-500)" }}>
+                              {s.lat && s.lng ? `${s.lat.toFixed(4)}, ${s.lng.toFixed(4)}` : "Coordinates pending"}
+                            </div>
+                            {s.maps_url && (
+                              <a href={s.maps_url} target="_blank" rel="noreferrer" style={{ display: "inline-block", marginTop: 4, color: "var(--teal-dark)", fontWeight: 700 }}>
+                                Open in Google Maps
+                              </a>
+                            )}
+                          </div>
+                        ))
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
 
               <div className="new-trip-details">
-                <div className="new-trip-card">
+                <div className="new-trip-card" style={{ background: "white", borderRadius: 16, boxShadow: "var(--shadow-sm)", padding: 20 }}>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: 18 }}>
                     <div>
                       <h3 style={{ fontSize: 18, fontWeight: 800 }}>Add New Trip</h3>
-                      <div style={{ fontSize: 13, color: "var(--gray-400)", marginTop: 2 }}>Enter your trip location, dates and stops</div>
+                      <div style={{ fontSize: 13, color: "var(--gray-400)", marginTop: 2 }}>Enter trip details and let AI generate your stop route</div>
                     </div>
-                    <div className="pill pill-teal">Draft</div>
+                    <div className="pill pill-teal">AI Planner</div>
+                  </div>
+
+                  <div className="form-group" style={{ marginBottom: 12 }}>
+                    <label>Trip name</label>
+                    <input value={tripName} onChange={(e) => setTripName(e.target.value)} placeholder="e.g., Sri Lanka Adventure" />
                   </div>
 
                   <div className="grid-2">
                     <div className="form-group" style={{ marginBottom: 12 }}>
-                      <label>Trip name</label>
-                      <input value={tripName} onChange={(e) => setTripName(e.target.value)} placeholder="e.g., Sri Lanka Adventure" />
+                      <label>Trip date</label>
+                      <input type="date" value={tripDate} onChange={(e) => setTripDate(e.target.value)} />
                     </div>
                     <div className="form-group" style={{ marginBottom: 12 }}>
-                      <label>Location</label>
-                      <input value={location} onChange={(e) => setLocation(e.target.value)} placeholder="e.g., Sri Lanka" />
-                    </div>
-                  </div>
-
-                  <div className="grid-2">
-                    <div className="form-group" style={{ marginBottom: 12 }}>
-                      <label>Start date</label>
-                      <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-                    </div>
-                    <div className="form-group" style={{ marginBottom: 12 }}>
-                      <label>End date</label>
-                      <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+                      <label>Number of stops</label>
+                      <select
+                        value={stopCount}
+                        onChange={(e) => setStopCount(Number(e.target.value))}
+                        style={{
+                          width: "100%",
+                          border: "1px solid var(--gray-200)",
+                          borderRadius: 12,
+                          padding: "12px 14px",
+                          fontSize: 14,
+                          background: "white",
+                          outline: "none",
+                        }}
+                      >
+                        {[2, 3, 4, 5, 6, 7].map((count) => (
+                          <option key={count} value={count}>{count} stops</option>
+                        ))}
+                      </select>
                     </div>
                   </div>
 
                   <div className="form-group" style={{ marginBottom: 12 }}>
-                    <label>Travelers</label>
-                    <input type="number" min={1} value={travelers} onChange={(e) => setTravelers(Number(e.target.value || 1))} />
-                  </div>
-
-                  <div className="new-trip-stops">
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
-                      <h4 style={{ fontSize: 14, fontWeight: 800 }}>Stops</h4>
-                      <span style={{ fontSize: 12, color: "var(--gray-400)" }}>{stops.length} added</span>
-                    </div>
-
-                    <div className="new-stop-row">
-                      <input
-                        value={stopDraft}
-                        onChange={(e) => setStopDraft(e.target.value)}
-                        placeholder="Add a stop (e.g., Sigiriya)"
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") addStop();
-                        }}
-                      />
-                      <button type="button" className="btn-teal" style={{ width: "auto", padding: "12px 16px" }} onClick={addStop}>
-                        Add
-                      </button>
-                    </div>
-
-                    <div className="new-trip-stop-list">
-                      {stops.map((s, i) => (
-                        <div key={`${s.name}-${i}`} className="new-trip-stop">
-                          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                            <div className="stop-index">{i + 1}</div>
-                            <div style={{ flex: 1 }}>
-                              <div style={{ fontWeight: 700, fontSize: 13 }}>{s.name}</div>
-                              <div style={{ fontSize: 12, color: "var(--gray-400)" }}>{s.note || "Add a note (optional)"}</div>
-                            </div>
-                          </div>
+                    <label>Favorites</label>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
+                      {FAVORITE_OPTIONS.map((opt) => {
+                        const activeFavorite = favorites.includes(opt.id);
+                        return (
                           <button
+                            key={opt.id}
                             type="button"
-                            className="stop-remove"
-                            onClick={() => setStops((prev) => prev.filter((_, idx) => idx !== i))}
-                            aria-label={`Remove stop ${i + 1}`}
+                            onClick={() => toggleFavorite(opt.id)}
+                            style={{
+                              border: activeFavorite ? "1.5px solid var(--teal)" : "1.5px solid var(--gray-200)",
+                              borderRadius: 10,
+                              padding: "9px 8px",
+                              background: activeFavorite ? "var(--teal-light)" : "white",
+                              color: activeFavorite ? "var(--teal-dark)" : "var(--gray-600)",
+                              fontSize: 12,
+                              fontWeight: 700,
+                              cursor: "pointer",
+                            }}
                           >
-                            ✕
+                            {opt.label}
                           </button>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
+
+                  {error && <p style={{ color: "#dc2626", fontSize: 13, marginBottom: 8 }}>{error}</p>}
 
                   <div style={{ display: "flex", gap: 12, marginTop: 18 }}>
-                    <button type="button" className="btn-teal" style={{ flex: 1 }}>
-                      Save Trip
+                    <button type="button" className="btn-teal" style={{ flex: 1 }} onClick={handleGeneratePlan} disabled={loadingPlan}>
+                      {loadingPlan ? "Generating..." : "Generate Route with AI"}
                     </button>
                     <button
                       type="button"
