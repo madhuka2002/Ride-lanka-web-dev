@@ -362,9 +362,24 @@ export default function TripsScreen({ active, showScreen }) {
                       style={{ width: "auto", padding: "14px 18px", background: "white", color: "var(--teal)", border: "1.5px solid var(--gray-200)" }}
                       onClick={() => setMode("list")}
                     >
-                      Cancel
+                      {plannedStops.length > 0 ? "Done" : "Cancel"}
                     </button>
                   </div>
+
+                  {plannedStops.length > 0 && (
+                    <div style={{ marginTop: 24, borderTop: "1px solid var(--gray-200)", paddingTop: 18 }}>
+                      <h4 style={{ marginBottom: 12, fontSize: 16, fontWeight: 800 }}>Your AI Route ({plannedStops.length} stops)</h4>
+                      <div style={{ display: "flex", flexDirection: "column", gap: 12, maxHeight: 380, overflowY: "auto", paddingRight: 8 }}>
+                        {plannedStops.map((stop, i) => (
+                           <div key={i} style={{ background: "var(--gray-50)", padding: 14, borderRadius: 12, border: "1px solid var(--gray-100)" }}>
+                             <div style={{ fontWeight: 800, color: "var(--teal-dark)" }}>{stop.stop_order}. {stop.name}</div>
+                             <div style={{ fontSize: 13, color: "var(--gray-500)", marginTop: 6, lineHeight: 1.4 }}>{stop.description}</div>
+                             {stop.stop_note && <div style={{ fontSize: 12, color: "var(--teal)", marginTop: 8, fontWeight: 600 }}>💡 {stop.stop_note}</div>}
+                           </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
