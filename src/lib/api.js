@@ -20,7 +20,7 @@ async function safeFetch(url, options) {
             `Network request failed for ${url}. ` +
             `Check that your backend is running and reachable at NEXT_PUBLIC_BACKEND_URL=${BACKEND} (from .env.local), ` +
             `and that it allows requests from this app (CORS).`;
-        const err = new Error(e ? .message ? `${e.message}. ${hint}` : hint);
+        const err = new Error(e?.message ? `${e.message}. ${hint}` : hint);
         err.cause = e;
         throw err;
     }
@@ -71,7 +71,38 @@ export async function generateTripPlan(token, { trip_name, trip_date, stop_count
     return res.json();
 }
 
+export async function fetchPlaceCulture(token, place_name) {
+    const url = `${BACKEND}/api/users/trips/culture`;
+    const res = await safeFetch(url, {
+        method: "POST",
+        headers: await authHeaders(token),
+        body: JSON.stringify({ place_name }),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
+}
+
 // ─── Event tracking ────────────────────────────────────────────────────────
+
+export async function saveUserTrip(token, tripData) {
+    const url = `${BACKEND}/api/users/trips`;
+    const res = await safeFetch(url, {
+        method: "POST",
+        headers: await authHeaders(token),
+        body: JSON.stringify(tripData),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
+}
+
+export async function getUserTrips(token) {
+    const url = `${BACKEND}/api/users/trips`;
+    const res = await safeFetch(url, {
+        headers: await authHeaders(token),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
+}
 
 export async function trackEvent(token, { place_name, category, action }) {
     // Fire-and-forget — don't block the UI
