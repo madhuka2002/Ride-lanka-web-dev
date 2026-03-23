@@ -1799,3 +1799,48 @@ body {
     background: var(--gray-200);
     border-radius: 3px;
 }
+
+/* ===== HONEYCOMB BADGES ===== */
+
+.honeycomb {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: flex-start;
+  padding: 16px 0;
+}
+
+.hexagon {
+  width: 80px;
+  height: 92px;
+  background-color: var(--bg-card, #fff);
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.hexagon::before {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  background-color: var(--teal-light, #e0f5f2);
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  z-index: 0;
+}
+
+.hexagon:hover {
+  transform: scale(1.05);
+}
+
+.hexagon img {
+  position: relative;
+  z-index: 1;
+  max-width: 60px;
+  max-height: 60px;
+  object-fit: contain;
+}

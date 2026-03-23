@@ -123,7 +123,7 @@ function AdminQuests() {
   const [error, setError] = useState(null);
   
   const [isCreating, setIsCreating] = useState(false);
-  const [formData, setFormData] = useState({ title: "", description: "", reward: "" });
+  const [formData, setFormData] = useState({ title: "", description: "", reward: "", badgeImage: "" });
 
   useEffect(() => {
     loadQuests();
@@ -143,6 +143,16 @@ function AdminQuests() {
     }
   }
 
+  function handleFileChange(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      setFormData(prev => ({ ...prev, badgeImage: ev.target.result }));
+    };
+    reader.readAsDataURL(file);
+  }
+
   async function handleCreate(e) {
     e.preventDefault();
     if (isCreating) return;
@@ -150,7 +160,10 @@ function AdminQuests() {
     try {
       setIsCreating(true);
       await createQuest("dev-admin-token", formData);
-      setFormData({ title: "", description: "", reward: "" });
+      setFormData({ title: "", description: "", reward: "", badgeImage: "" });
+      // Clear file input visually
+      const fileInput = document.getElementById("badge-upload");
+      if (fileInput) fileInput.value = "";
       await loadQuests();
     } catch (err) {
       alert("Failed to create quest: " + err.message);
@@ -203,6 +216,20 @@ function AdminQuests() {
         <button type="submit" disabled={isCreating} className="admin-btn-solid" style={{ background: "#0d9488", color: "white", padding: "8px 16px", border: "none", borderRadius: "4px", cursor: "pointer" }}>
           {isCreating ? "Adding..." : "+ Create Quest"}
         </button>
+
+        <div style={{ flex: "1 1 100%", marginTop: "8px" }}>
+          <label style={{ fontSize: "0.85rem", color: "#64748b", display: "block", marginBottom: "4px" }}>Badge Image (PNG)</label>
+          <input 
+            id="badge-upload"
+            type="file" 
+            accept="image/png, image/jpeg" 
+            onChange={handleFileChange}
+            style={{ padding: "4px", fontSize: "0.9rem" }}
+          />
+          {formData.badgeImage && (
+            <img src={formData.badgeImage} alt="Preview" style={{ height: "40px", width: "40px", objectFit: "cover", marginLeft: "12px", borderRadius: "4px", verticalAlign: "middle" }} />
+          )}
+        </div>
       </form>
 
       {error && <p style={{ color: "red" }}>{error}</p>}
@@ -225,7 +252,14 @@ function AdminQuests() {
               ) : (
                 quests.map(q => (
                   <tr key={q.id}>
-                    <td><strong>{q.title}</strong></td>
+                    <td>
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        {q.badgeImage && (
+                          <img src={q.badgeImage} alt="badge" style={{ width: 32, height: 32, borderRadius: 4, objectFit: "cover" }} />
+                        )}
+                        <strong>{q.title}</strong>
+                      </div>
+                    </td>
                     <td>{q.description}</td>
                     <td><span className="admin-badge admin-badge-teal">{q.reward}</span></td>
                     <td>{new Date(q.createdAt).toLocaleDateString()}</td>

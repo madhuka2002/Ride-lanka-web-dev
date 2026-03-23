@@ -3,12 +3,13 @@
 import { useState, useEffect } from "react";
 import Sidebar from "../Sidebar";
 import { useAuth } from "@/context/AuthContext";
-import { getQuests } from "@/lib/api";
+import { getQuests, completeQuest } from "@/lib/api";
 
 export default function QuestsScreen({ active, showScreen }) {
   const { user, token } = useAuth();
   const [quests, setQuests] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [completingId, setCompletingId] = useState(null);
   const displayName = user?.displayName || user?.email?.split("@")[0] || "traveler";
 
   useEffect(() => {
@@ -26,6 +27,19 @@ export default function QuestsScreen({ active, showScreen }) {
       console.error("Failed to load quests:", err);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleCompleteQuest(questId) {
+    if (!token) return;
+    try {
+      setCompletingId(questId);
+      const res = await completeQuest(token, questId);
+      alert(`Quest completed! You gained ${res.xpGained} XP. Check your profile.`);
+    } catch (err) {
+      alert("Failed to complete quest: " + err.message);
+    } finally {
+      setCompletingId(null);
     }
   }
 
@@ -64,7 +78,12 @@ export default function QuestsScreen({ active, showScreen }) {
                     gap: "8px"
                   }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                      <h3 style={{ margin: 0, fontSize: "1.1rem", color: "var(--primary)" }}>{q.title}</h3>
+                      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                        {q.badgeImage && (
+                          <img src={q.badgeImage} alt="badge" style={{ width: 44, height: 44, objectFit: "cover", borderRadius: "8px", boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }} />
+                        )}
+                        <h3 style={{ margin: 0, fontSize: "1.1rem", color: "var(--primary)" }}>{q.title}</h3>
+                      </div>
                       <span style={{ 
                         background: "var(--teal-light)", 
                         color: "var(--teal-dark)", 
@@ -78,8 +97,13 @@ export default function QuestsScreen({ active, showScreen }) {
                     </div>
                     <p style={{ margin: 0, color: "var(--text-main)", lineHeight: "1.5" }}>{q.description}</p>
                     <div style={{ marginTop: "12px" }}>
-                      <button className="btn-outline" style={{ fontSize: "0.9rem", padding: "6px 12px" }}>
-                        Start Quest
+                      <button 
+                        className="btn-outline" 
+                        style={{ fontSize: "0.9rem", padding: "6px 12px", border: "2px solid var(--teal)", color: "var(--teal)", background: "transparent", cursor: completingId === q.id ? "not-allowed" : "pointer" }}
+                        onClick={() => handleCompleteQuest(q.id)}
+                        disabled={completingId === q.id}
+                      >
+                        {completingId === q.id ? "Completing..." : "✓ Complete Quest"}
                       </button>
                     </div>
                   </div>

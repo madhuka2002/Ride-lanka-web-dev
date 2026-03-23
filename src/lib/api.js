@@ -39,6 +39,15 @@ export async function saveUserProfile(token, { name, interests }) {
     return res.json();
 }
 
+export async function getUserProfile(token) {
+    const url = `${BACKEND}/api/users/profile`;
+    const res = await safeFetch(url, {
+        headers: await authHeaders(token),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
+}
+
 // ─── Recommendations ───────────────────────────────────────────────────────
 
 export async function getRecommendations(token) {
@@ -173,6 +182,16 @@ export async function deleteQuest(token, questId) {
     const url = `${BACKEND}/api/quests/${questId}`;
     const res = await safeFetch(url, {
         method: "DELETE",
+        headers: await authHeaders(token),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
+}
+
+export async function completeQuest(token, questId) {
+    const url = `${BACKEND}/api/quests/${questId}/complete`;
+    const res = await safeFetch(url, {
+        method: "POST",
         headers: await authHeaders(token),
     });
     if (!res.ok) throw new Error(await res.text());
