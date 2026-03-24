@@ -18,7 +18,7 @@ export default function WishlistScreen({ active, showScreen }) {
         <div className="main-content">
           <div className="topbar">
             <div>
-              <h1 style={{ fontSize: "2rem", color: "var(--teal-dark)" }}>❤️ {t("wishlistTitle")}</h1>
+              <h1 className="wishlist-page-title">❤️ {t("wishlistTitle")}</h1>
               <div className="subtitle">{wishlist.length} {t("wishlistPlacesSaved")}</div>
             </div>
           </div>
