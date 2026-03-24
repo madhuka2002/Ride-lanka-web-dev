@@ -2307,6 +2307,359 @@ body {
 /* Restore the larger grid item width for a formal look (4 per row on desktop) */
 /* Unified grid item width to 320px (Trip style size) for all home screen sections */
 .persistent-content .cards-grid,
+/* ===== PROFILE EDIT CARD ===== */
+.profile-edit-card {
+    background: white;
+    padding: 32px;
+    border-radius: 16px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--gray-100);
+    margin-bottom: 40px;
+}
+
+.edit-card-header {
+    margin-bottom: 32px;
+}
+
+.edit-card-header h2 {
+    font-size: 1.5rem;
+    margin-bottom: 6px;
+    color: var(--text-main);
+}
+
+.edit-card-header p {
+    color: var(--gray-500);
+    font-size: 0.95rem;
+}
+
+.profile-pic-edit {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 32px;
+}
+
+.profile-pic-edit .preview-container {
+    position: relative;
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid var(--teal-light);
+    box-shadow: var(--shadow-sm);
+}
+
+.preview-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.preview-placeholder {
+    width: 100%;
+    height: 100%;
+    background: var(--teal-light);
+    color: var(--teal-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.upload-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    text-align: center;
+    padding: 6px 0;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.25s;
+    opacity: 0;
+}
+
+.preview-container:hover .upload-overlay {
+    opacity: 1;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 24px;
+    margin-bottom: 32px;
+}
+
+.form-grid .form-group.full-width {
+    grid-column: span 2;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--gray-700);
+    margin-bottom: 8px;
+}
+
+.form-group label small {
+    font-weight: 400;
+    color: var(--gray-400);
+    margin-left: 4px;
+}
+
+.edit-card-actions {
+    display: flex;
+    gap: 16px;
+    padding-top: 24px;
+    border-top: 1px solid var(--gray-50);
+}
+
+.btn-save {
+    background: var(--teal);
+    color: white;
+    padding: 12px 28px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-save:hover {
+    background: var(--teal-dark);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-save:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.btn-cancel {
+    background: white;
+    color: var(--gray-600);
+    padding: 12px 24px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-cancel:hover {
+    background: var(--gray-50);
+    border-color: var(--gray-300);
+}
+
+.input-field {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    color: var(--text-main);
+    background: white;
+    transition: all 0.2s;
+    outline: none;
+}
+
+.input-field:focus {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.1);
+}
+
+.input-field:disabled {
+    background: var(--gray-50);
+    color: var(--gray-400);
+    cursor: not-allowed;
+}
+
+textarea.input-field {
+    resize: vertical;
+    min-height: 100px;
+    line-height: 1.5;
+}
+
+/* ===== SETTINGS UI ===== */
+.settings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 24px;
+    margin-top: 32px;
+}
+
+.settings-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid var(--gray-100);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.settings-card:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.settings-card .card-header {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.settings-card .card-header .icon {
+    font-size: 1.5rem;
+    background: var(--gray-50);
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+}
+
+.settings-card .card-header h3 {
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+    color: var(--text-main);
+}
+
+.settings-card .card-header p {
+    font-size: 0.85rem;
+    color: var(--gray-500);
+    line-height: 1.4;
+}
+
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--gray-50);
+}
+
+.setting-item:last-child {
+    border-bottom: none;
+}
+
+.setting-item .label-group {
+    flex: 1;
+    padding-right: 20px;
+}
+
+.setting-item .item-title {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: 2px;
+}
+
+.setting-item .item-desc {
+    font-size: 0.8rem;
+    color: var(--gray-500);
+}
+
+/* Theme Selector */
+.theme-selector {
+    display: flex;
+    background: var(--gray-50);
+    padding: 4px;
+    border-radius: 10px;
+    gap: 4px;
+}
+
+.theme-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--gray-600);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.theme-btn.active {
+    background: white;
+    color: var(--teal);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Toggle Switch */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--gray-200);
+    transition: .3s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .3s;
+    box-shadow: var(--shadow-sm);
+}
+
+input:checked + .slider {
+    background-color: var(--teal);
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px var(--teal);
+}
+
+input:checked + .slider:before {
+    transform: translateX(20px);
+}
+
+.slider.round {
+    border-radius: 24px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
 .persistent-content .cards-grid-3 {
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important;
 }

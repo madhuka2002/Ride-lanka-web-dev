@@ -24,7 +24,17 @@ export default function ProfileScreen({ active, showScreen }) {
   const [profile, setProfile] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [editForm, setEditForm] = useState({ name: "", email: "", bio: "", password: "", profilePic: "" });
+  const [editForm, setEditForm] = useState({ 
+    firstName: "", 
+    lastName: "", 
+    email: "", 
+    dob: "", 
+    phoneNumber: "", 
+    bio: "", 
+    password: "", 
+    confirmPassword: "",
+    profilePic: "" 
+  });
 
   const displayName = profile?.name || user?.displayName || user?.email?.split("@")[0] || "traveler";
 
@@ -41,10 +51,14 @@ export default function ProfileScreen({ active, showScreen }) {
 
   function handleEditClick() {
     setEditForm({
-      name: profile?.name || displayName,
+      firstName: profile?.firstName || profile?.name?.split(" ")[0] || "",
+      lastName: profile?.lastName || profile?.name?.split(" ").slice(1).join(" ") || "",
       email: user?.email || "",
+      dob: profile?.dob || "",
+      phoneNumber: profile?.phoneNumber || "",
       bio: profile?.bio || "",
       password: "",
+      confirmPassword: "",
       profilePic: profile?.profilePic || ""
     });
     setIsEditing(true);
@@ -63,6 +77,12 @@ export default function ProfileScreen({ active, showScreen }) {
   async function handleSave(e) {
     e.preventDefault();
     setSaving(true);
+    if (editForm.password && editForm.password !== editForm.confirmPassword) {
+      alert("Passwords do not match!");
+      setSaving(false);
+      return;
+    }
+
     try {
       if (editForm.password) {
         await updateUserPassword(editForm.password);
@@ -71,8 +91,12 @@ export default function ProfileScreen({ active, showScreen }) {
         await updateUserEmail(editForm.email);
       }
       await saveUserProfile(token, {
-        name: editForm.name,
+        firstName: editForm.firstName,
+        lastName: editForm.lastName,
+        name: `${editForm.firstName} ${editForm.lastName}`.trim(),
         email: editForm.email,
+        dob: editForm.dob,
+        phoneNumber: editForm.phoneNumber,
         bio: editForm.bio,
         profilePic: editForm.profilePic
       });
@@ -121,40 +145,69 @@ export default function ProfileScreen({ active, showScreen }) {
                 </div>
               </div>
             )}
-
             {isEditing && (
-              <form onSubmit={handleSave} style={{ marginBottom: 32, padding: 24, background: "white", borderRadius: 12, boxShadow: "var(--shadow-sm)" }}>
-                <h2 style={{ fontSize: "1.2rem", marginBottom: "20px" }}>Edit Profile</h2>
-                <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-                  <div>
-                    <label style={{ display: "block", marginBottom: 6, fontWeight: "500" }}>Profile Picture (PNG/JPG)</label>
-                    <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-                      {editForm.profilePic && <img src={editForm.profilePic} style={{ width: 60, height: 60, borderRadius: "50%", objectFit: "cover" }} alt="Avatar Preview" />}
-                      <input type="file" accept="image/png, image/jpeg" onChange={handleFileChange} />
-                    </div>
-                  </div>
-                  <div>
-                    <label style={{ display: "block", marginBottom: 6, fontWeight: "500" }}>Name</label>
-                    <input type="text" className="input-field" value={editForm.name} onChange={e => setEditForm(prev => ({...prev, name: e.target.value}))} required />
-                  </div>
-                  <div>
-                    <label style={{ display: "block", marginBottom: 6, fontWeight: "500" }}>Email <small style={{ fontWeight: "normal", color: "var(--gray-500)" }}>(Requires recent login to change)</small></label>
-                    <input type="email" className="input-field" value={editForm.email} onChange={e => setEditForm(prev => ({...prev, email: e.target.value}))} required disabled={user?.isDevAdmin} />
-                  </div>
-                  <div>
-                    <label style={{ display: "block", marginBottom: 6, fontWeight: "500" }}>Bio</label>
-                    <textarea className="input-field" rows={3} value={editForm.bio} onChange={e => setEditForm(prev => ({...prev, bio: e.target.value}))} placeholder="Tell us about yourself..." />
-                  </div>
-                  <div>
-                    <label style={{ display: "block", marginBottom: 6, fontWeight: "500" }}>New Password <small style={{ fontWeight: "normal", color: "var(--gray-500)" }}>(Leave blank to keep current)</small></label>
-                    <input type="password" className="input-field" value={editForm.password} onChange={e => setEditForm(prev => ({...prev, password: e.target.value}))} placeholder="••••••••" disabled={user?.isDevAdmin} />
+              <form onSubmit={handleSave} className="profile-edit-card">
+                <div className="edit-card-header">
+                  <h2>Edit Profile</h2>
+                  <p>Fine-tune your traveler identity and security settings.</p>
+                </div>
+
+                <div className="profile-pic-edit">
+                  <div className="preview-container">
+                    {editForm.profilePic ? (
+                      <img src={editForm.profilePic} className="preview-img" alt="Avatar Preview" />
+                    ) : (
+                      <div className="preview-placeholder">
+                        {(editForm.firstName.charAt(0) || "U").toUpperCase()}
+                      </div>
+                    )}
+                    <label className="upload-overlay">
+                      <span>Change</span>
+                      <input type="file" accept="image/png, image/jpeg" onChange={handleFileChange} hidden />
+                    </label>
                   </div>
                 </div>
-                <div style={{ display: "flex", gap: "12px", marginTop: 24 }}>
-                  <button type="submit" className="btn-primary" disabled={saving}>
-                    {saving ? "Saving..." : "Save Changes"}
+
+                <div className="form-grid">
+                  <div className="form-group">
+                    <label>First Name</label>
+                    <input type="text" className="input-field" value={editForm.firstName} onChange={e => setEditForm(prev => ({...prev, firstName: e.target.value}))} required />
+                  </div>
+                  <div className="form-group">
+                    <label>Last Name</label>
+                    <input type="text" className="input-field" value={editForm.lastName} onChange={e => setEditForm(prev => ({...prev, lastName: e.target.value}))} required />
+                  </div>
+                  <div className="form-group">
+                    <label>Date of Birth</label>
+                    <input type="date" className="input-field" value={editForm.dob} onChange={e => setEditForm(prev => ({...prev, dob: e.target.value}))} />
+                  </div>
+                  <div className="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" className="input-field" value={editForm.phoneNumber} onChange={e => setEditForm(prev => ({...prev, phoneNumber: e.target.value}))} placeholder="+94 7X XXX XXXX" />
+                  </div>
+                  <div className="form-group full-width">
+                    <label>Email Address <small>(Secure Field)</small></label>
+                    <input type="email" className="input-field" value={editForm.email} onChange={e => setEditForm(prev => ({...prev, email: e.target.value}))} required disabled={user?.isDevAdmin} />
+                  </div>
+                  <div className="form-group full-width">
+                    <label>Bio / Traveler Philosophy</label>
+                    <textarea className="input-field" rows={3} value={editForm.bio} onChange={e => setEditForm(prev => ({...prev, bio: e.target.value}))} placeholder="Tell us about yourself..." />
+                  </div>
+                  <div className="form-group">
+                    <label>New Password</label>
+                    <input type="password" className="input-field" value={editForm.password} onChange={e => setEditForm(prev => ({...prev, password: e.target.value}))} placeholder="••••••••" disabled={user?.isDevAdmin} />
+                  </div>
+                  <div className="form-group">
+                    <label>Confirm Password</label>
+                    <input type="password" className="input-field" value={editForm.confirmPassword} onChange={e => setEditForm(prev => ({...prev, confirmPassword: e.target.value}))} placeholder="••••••••" disabled={user?.isDevAdmin} />
+                  </div>
+                </div>
+
+                <div className="edit-card-actions">
+                  <button type="submit" className="btn-save" disabled={saving}>
+                    {saving ? "Saving Changes..." : "Save Profile"}
                   </button>
-                  <button type="button" className="btn-outline" onClick={() => setIsEditing(false)} disabled={saving}>
+                  <button type="button" className="btn-cancel" onClick={() => setIsEditing(false)} disabled={saving}>
                     Cancel
                   </button>
                 </div>

@@ -1,4 +1,4 @@
-const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
+const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL || "http://127.0.0.1:5000";
 
 /**
  * Get the Firebase ID token from the current user (passed in from AuthContext).
@@ -28,12 +28,12 @@ async function safeFetch(url, options) {
 
 // ─── Profile ───────────────────────────────────────────────────────────────
 
-export async function saveUserProfile(token, { name, interests }) {
+export async function saveUserProfile(token, profileData) {
     const url = `${BACKEND}/api/users/profile`;
     const res = await safeFetch(url, {
         method: "POST",
         headers: await authHeaders(token),
-        body: JSON.stringify({ name, interests }),
+        body: JSON.stringify(profileData),
     });
     if (!res.ok) throw new Error(await res.text());
     return res.json();
