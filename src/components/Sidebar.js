@@ -55,7 +55,7 @@ export default function Sidebar({
           role="button"
           tabIndex={0}
         >
-          <span className="icon">⭐</span> Saved Plans
+          <span className="icon">❤️</span> Wishlist
         </div>
       </div>
       <div className="nav-section" style={{ marginTop: 12 }}>
