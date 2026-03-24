@@ -4,10 +4,12 @@ import { useEffect, useMemo, useState } from "react";
 import Sidebar from "../Sidebar";
 import { useAuth } from "@/context/AuthContext";
 import { useWishlist } from "@/context/WishlistContext";
+import { useSettings } from "@/context/SettingsContext";
 import { getExplorePlaces } from "@/lib/api";
 
 export default function ExploreScreen({ active, showScreen }) {
   const { user, token } = useAuth();
+  const { t } = useSettings();
   const displayName = useMemo(() => user?.displayName || user?.email?.split("@")[0] || "traveler", [user]);
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [explorePlaces, setExplorePlaces] = useState([]);
@@ -41,7 +43,7 @@ export default function ExploreScreen({ active, showScreen }) {
   return (
     <div id="screen-explore" className={`screen ${active ? "active" : ""}`}>
       <div className="main-layout">
-        <Sidebar activeItem="explore" userName={displayName} userRole="Trip planner for Sri Lanka" onNavigate={showScreen} />
+        <Sidebar activeItem="explore" userName={displayName} userRole={t("appRoleTripPlanner")} onNavigate={showScreen} />
         <div className="main-content">
           
           {selectedPlace ? (
@@ -53,7 +55,7 @@ export default function ExploreScreen({ active, showScreen }) {
                       className="btn-back-article glass-panel" 
                       onClick={() => setSelectedPlace(null)} 
                     >
-                      ← Back to Universe
+                      {t("tripsBackToTrips")}
                     </button>
                   </div>
                   <h1 className="article-title-futuristic">{selectedPlace.title}</h1>
@@ -91,8 +93,8 @@ export default function ExploreScreen({ active, showScreen }) {
             <>
               <div className="topbar" style={{ borderBottom: 'none' }}>
                 <div style={{ paddingBottom: "24px", width: "100%" }}>
-                  <h1 className="text-glow" style={{ fontSize: "2.8rem", color: "var(--teal-dark)", marginBottom: 8, fontWeight: 900 }}>EXPLORE SRI LANKA</h1>
-                  <div className="subtitle" style={{ fontSize: "1.1rem", color: "var(--gray-500)", letterSpacing: '1px' }}>
+                  <h1 className="text-glow explore-main-title" style={{ fontSize: "2.8rem", marginBottom: 8, fontWeight: 900 }}>EXPLORE SRI LANKA</h1>
+                  <div className="subtitle explore-main-subtitle" style={{ fontSize: "1.1rem", letterSpacing: '1px' }}>
                     IMMERSIVE JOURNEYS THROUGH THE PEARL OF THE INDIAN OCEAN
                   </div>
                 </div>
@@ -143,7 +145,7 @@ export default function ExploreScreen({ active, showScreen }) {
                         <button
                           className={`wishlist-btn ${liked ? "wishlisted" : ""}`}
                           onClick={(e) => { e.stopPropagation(); liked ? removeFromWishlist(place.title) : addToWishlist({ ...place, name: place.title, image: place.image }); }}
-                          title={liked ? "Remove from Wishlist" : "Add to Wishlist"}
+                          title={liked ? t("wishlistRemoveTitle") : t("navWishlist")}
                         >
                           {liked ? "❤️" : "🤍"}
                         </button>
