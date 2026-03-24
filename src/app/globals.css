@@ -615,7 +615,7 @@ body {
 
 /* ===== HOME / EXPLORE ===== */
 
-#screen-home .main-content {}
+
 
 .hero-banner {
     background: linear-gradient(110deg, var(--teal-dark) 0%, var(--teal) 100%);
@@ -894,7 +894,7 @@ body {
 
 /* ===== DESTINATION DETAIL ===== */
 
-#screen-detail .main-content {}
+
 
 .back-btn {
     display: inline-flex;
@@ -917,7 +917,7 @@ body {
     gap: 28px;
 }
 
-.detail-main {}
+
 
 .detail-images {
     display: grid;
@@ -1111,7 +1111,7 @@ body {
 
 /* ===== PROFILE ===== */
 
-#screen-profile .main-content {}
+
 
 .profile-layout {
     display: grid;
@@ -1209,7 +1209,7 @@ body {
     color: var(--gray-600);
 }
 
-.profile-right {}
+
 
 .info-card {
     background: white;
@@ -1244,7 +1244,7 @@ body {
 
 /* ===== TRIP PLANNER ===== */
 
-#screen-trips .main-content {}
+
 
 .trips-layout {
     display: grid;
@@ -1455,7 +1455,7 @@ body {
 
 /* ===== NOTIFICATIONS ===== */
 
-.notif-list {}
+
 
 .notif-item {
     display: flex;
@@ -1549,7 +1549,7 @@ body {
     font-weight: 600;
 }
 
-.settings-content {}
+
 
 .settings-section {
     background: white;
@@ -2248,6 +2248,89 @@ body {
     border-radius: 50%;
     box-shadow: 0 0 0 rgba(20, 184, 166, 0.4);
     animation: pulse-glow 2s infinite;
+}
+
+/* ===== PERSISTENT SHARED SIDEBAR LAYOUT ===== */
+
+/* The persistent layout wrapper is hidden by default (on splash/auth) */
+.persistent-layout {
+    display: none;
+}
+
+/* Show the layout when navigated into an app screen */
+.persistent-layout.layout-visible {
+    display: flex;
+    min-height: 100vh;
+    align-items: stretch;
+}
+
+/* The content area holds all screens side-by-side (only one is .active) */
+.persistent-content {
+    flex: 1;
+    min-width: 0; /* Prevent flex child from overflowing */
+    padding-left: var(--sidebar); /* Clear the fixed sidebar! */
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/* Each .screen inside persistent-content fills the space */
+.persistent-content .screen {
+    display: none !important;
+    width: 100%;
+}
+
+.persistent-content .screen.active {
+    display: block !important;
+}
+
+/* Hide the nav sidebar inside each individual screen */
+.persistent-content .screen .main-layout > nav.sidebar {
+    display: none !important;
+}
+
+/* Main-layout becomes a simple block so main-content fills full width */
+.persistent-content .screen .main-layout {
+    display: block;
+}
+
+/* Make the main-content fill the full width without inheriting legacy margins */
+.persistent-content .screen .main-layout > .main-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    padding: 32px;
+    box-sizing: border-box;
+    min-height: 100% !important; /* Allow it to grow or fill parent, not exceed window */
+}
+
+/* Ensure grids are responsive within the new layout */
+/* Restore the larger grid item width for a formal look (4 per row on desktop) */
+/* Unified grid item width to 320px (Trip style size) for all home screen sections */
+.persistent-content .cards-grid,
+.persistent-content .cards-grid-3 {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important;
+}
+
+.btn-logout-small {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: transparent;
+    color: #ef4444;
+    border: 1.5px solid #ef4444;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: fit-content;
+    margin-top: 32px;
+}
+
+.btn-logout-small:hover {
+    background: #fef2f2;
+    transform: translateY(-1px);
 }
 
 /* Wishlist Heart Button */
