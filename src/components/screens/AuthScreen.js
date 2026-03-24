@@ -3,9 +3,11 @@
 import { useState } from "react";
 import LoginForm from "./LoginForm";
 import SignUpForm from "./SignUpForm";
+import { useSettings } from "@/context/SettingsContext";
 
 export default function AuthScreen({ active, onSignIn, onSignUp }) {
   const [activeTab, setActiveTab] = useState("login");
+  const { t } = useSettings();
 
   const switchTab = (tab) => {
     setActiveTab(tab);
@@ -16,11 +18,11 @@ export default function AuthScreen({ active, onSignIn, onSignUp }) {
       <div className="auth-left">
         <div className="auth-left-content">
           <h2>
-            Every journey begins
+            {t("authHeroTitleLine1")}
             <br />
-            with a single step.
+            {t("authHeroTitleLine2")}
           </h2>
-          <p>Join millions of travelers who plan their dream trips with DreamTrip.</p>
+          <p>{t("authHeroSubtitle")}</p>
         </div>
       </div>
       <div className="auth-right">
@@ -43,7 +45,7 @@ export default function AuthScreen({ active, onSignIn, onSignUp }) {
             role="button"
             tabIndex={0}
           >
-            Sign In
+            {t("authSignInTab")}
           </div>
           <div
             className={`auth-tab ${activeTab === "signup" ? "active" : ""}`}
@@ -51,7 +53,7 @@ export default function AuthScreen({ active, onSignIn, onSignUp }) {
             role="button"
             tabIndex={0}
           >
-            Create Account
+            {t("authCreateAccountTab")}
           </div>
         </div>
         {activeTab === "login" ? (

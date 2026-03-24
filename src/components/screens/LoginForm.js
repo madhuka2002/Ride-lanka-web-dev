@@ -4,10 +4,12 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { isAdminEmail } from "@/lib/adminAuth";
+import { useSettings } from "@/context/SettingsContext";
 
 export default function LoginForm({ onSignIn }) {
   const router = useRouter();
   const { signIn } = useAuth();
+  const { t } = useSettings();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -15,7 +17,7 @@ export default function LoginForm({ onSignIn }) {
 
   async function handleSignIn() {
     if (!email || !password) {
-      setError("Please enter your email and password.");
+      setError(t("loginErrorEmpty"));
       return;
     }
     setLoading(true);
@@ -28,7 +30,7 @@ export default function LoginForm({ onSignIn }) {
       }
       onSignIn();
     } catch (e) {
-      setError(e.message || "Sign in failed. Check your credentials.");
+      setError(e.message || t("loginErrorFailed"));
     } finally {
       setLoading(false);
     }
@@ -36,10 +38,10 @@ export default function LoginForm({ onSignIn }) {
 
   return (
     <div id="tab-login" className="auth-form">
-      <h3>Welcome back!</h3>
-      <p className="subtitle">Sign in to continue your travel journey</p>
+      <h3>{t("loginWelcomeBack")}</h3>
+      <p className="subtitle">{t("loginSubtitle")}</p>
       <div className="form-group">
-        <label>Email Address</label>
+        <label>{t("loginEmailLabel")}</label>
         <input
           type="email"
           placeholder="you@example.com"
@@ -48,7 +50,7 @@ export default function LoginForm({ onSignIn }) {
         />
       </div>
       <div className="form-group">
-        <label>Password</label>
+        <label>{t("loginPasswordLabel")}</label>
         <input
           type="password"
           placeholder="Enter password"
@@ -56,10 +58,10 @@ export default function LoginForm({ onSignIn }) {
           onChange={(e) => setPassword(e.target.value)}
         />
       </div>
-      <div className="forgot-link">Forgot password?</div>
+      <div className="forgot-link">{t("loginForgotPassword")}</div>
       {error && <p style={{ color: "red", marginBottom: 8, fontSize: 13 }}>{error}</p>}
       <button className="btn-teal" onClick={handleSignIn} disabled={loading}>
-        {loading ? "Signing in..." : "Sign In"}
+        {loading ? t("loginSigningIn") : t("loginSignIn")}
       </button>
     </div>
   );
