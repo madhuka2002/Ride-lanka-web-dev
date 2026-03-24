@@ -223,7 +223,7 @@ export default function ProfileScreen({ active, showScreen }) {
               </button>
             </div>
 
-            <button className="btn-teal" style={{ marginTop: 32 }} onClick={handleLogout}>Sign Out</button>
+            <button className="btn-logout-small" onClick={handleLogout}>Sign Out</button>
           </div>
         </div>
       </div>

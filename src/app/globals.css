@@ -615,7 +615,7 @@ body {
 
 /* ===== HOME / EXPLORE ===== */
 
-#screen-home .main-content {}
+
 
 .hero-banner {
     background: linear-gradient(110deg, var(--teal-dark) 0%, var(--teal) 100%);
@@ -894,7 +894,7 @@ body {
 
 /* ===== DESTINATION DETAIL ===== */
 
-#screen-detail .main-content {}
+
 
 .back-btn {
     display: inline-flex;
@@ -917,7 +917,7 @@ body {
     gap: 28px;
 }
 
-.detail-main {}
+
 
 .detail-images {
     display: grid;
@@ -1111,7 +1111,7 @@ body {
 
 /* ===== PROFILE ===== */
 
-#screen-profile .main-content {}
+
 
 .profile-layout {
     display: grid;
@@ -1209,7 +1209,7 @@ body {
     color: var(--gray-600);
 }
 
-.profile-right {}
+
 
 .info-card {
     background: white;
@@ -1244,7 +1244,7 @@ body {
 
 /* ===== TRIP PLANNER ===== */
 
-#screen-trips .main-content {}
+
 
 .trips-layout {
     display: grid;
@@ -1455,7 +1455,7 @@ body {
 
 /* ===== NOTIFICATIONS ===== */
 
-.notif-list {}
+
 
 .notif-item {
     display: flex;
@@ -1549,7 +1549,7 @@ body {
     font-weight: 600;
 }
 
-.settings-content {}
+
 
 .settings-section {
     background: white;
@@ -1812,6 +1812,8 @@ body {
   inset: 0;
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
+  background-color: #1a1a1a; /* Futuristic dark fallback */
   transition: transform 0.6s ease;
   z-index: 0;
 }
@@ -2056,4 +2058,365 @@ body {
   max-width: 60px;
   max-height: 60px;
   object-fit: contain;
+}
+
+/* ===== MODAL DETAIL VIEW ===== */
+
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(8px);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.modal-content {
+    background: white;
+    width: 100%;
+    max-width: 900px;
+    max-height: 90vh;
+    border-radius: 24px;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: var(--shadow-lg);
+    animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes modalPop {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.btn-close-modal {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: all 0.2s;
+    font-size: 20px;
+}
+
+.btn-close-modal:hover {
+    background: white;
+    transform: scale(1.1);
+}
+
+.maps-container {
+    width: 100%;
+    height: 350px;
+    border-radius: 16px;
+    overflow: hidden;
+    margin-top: 32px;
+    border: 1px solid var(--gray-100);
+}
+
+.maps-embed {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* Adjusting existing styles for modal context */
+.modal-content .explore-article-hero {
+    height: 350px;
+    position: relative;
+}
+
+.modal-content .explore-article-content {
+    padding: 24px !important; /* Reduced padding to remove negative space */
+}
+/* ===== FUTURISTIC / GLASSMORPHISM ===== */
+
+.futuristic-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    transition: all 0.3s ease;
+}
+
+.futuristic-card:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-5px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 40px 0 rgba(31, 38, 135, 0.5);
+}
+
+.glow-teal {
+    box-shadow: 0 0 15px rgba(20, 184, 166, 0.3);
+}
+
+.glow-teal:hover {
+    box-shadow: 0 0 25px rgba(20, 184, 166, 0.5);
+}
+
+.text-glow {
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+}
+
+.explore-map-container {
+    width: 100%;
+    height: 400px;
+    border-radius: 24px;
+    overflow: hidden;
+    margin-bottom: 32px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.1);
+    position: relative;
+    background: #111;
+}
+
+.map-overlay-info {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(8px);
+    padding: 12px 20px;
+    border-radius: 12px;
+    color: white;
+    z-index: 10;
+    font-size: 0.9rem;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Immersive Article Styles */
+.article-futuristic-header {
+    background-attachment: fixed;
+    height: 60vh !important;
+}
+
+.article-content-glass {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px);
+    border-radius: 32px;
+    margin-top: -80px;
+    position: relative;
+    z-index: 2;
+    padding: 40px !important;
+    box-shadow: 0 -20px 40px rgba(0,0,0,0.1);
+}
+
+.article-title-futuristic {
+    font-size: 4rem !important;
+    font-weight: 900 !important;
+    letter-spacing: -2px;
+    text-transform: uppercase;
+    background: linear-gradient(to right, #fff, #99f6e4);
+    -webkit-background-clip: text;
+    background-clip: text; /* Compatibility fix */
+    -webkit-text-fill-color: transparent;
+}
+
+@keyframes pulse-glow {
+    0% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.05); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.8; }
+}
+
+.marker-pulse {
+    width: 12px;
+    height: 12px;
+    background: var(--teal);
+    border-radius: 50%;
+    box-shadow: 0 0 0 rgba(20, 184, 166, 0.4);
+    animation: pulse-glow 2s infinite;
+}
+
+/* ===== PERSISTENT SHARED SIDEBAR LAYOUT ===== */
+
+/* The persistent layout wrapper is hidden by default (on splash/auth) */
+.persistent-layout {
+    display: none;
+}
+
+/* Show the layout when navigated into an app screen */
+.persistent-layout.layout-visible {
+    display: flex;
+    min-height: 100vh;
+    align-items: stretch;
+}
+
+/* The content area holds all screens side-by-side (only one is .active) */
+.persistent-content {
+    flex: 1;
+    min-width: 0; /* Prevent flex child from overflowing */
+    padding-left: var(--sidebar); /* Clear the fixed sidebar! */
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/* Each .screen inside persistent-content fills the space */
+.persistent-content .screen {
+    display: none !important;
+    width: 100%;
+}
+
+.persistent-content .screen.active {
+    display: block !important;
+}
+
+/* Hide the nav sidebar inside each individual screen */
+.persistent-content .screen .main-layout > nav.sidebar {
+    display: none !important;
+}
+
+/* Main-layout becomes a simple block so main-content fills full width */
+.persistent-content .screen .main-layout {
+    display: block;
+}
+
+/* Make the main-content fill the full width without inheriting legacy margins */
+.persistent-content .screen .main-layout > .main-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    padding: 32px;
+    box-sizing: border-box;
+    min-height: 100% !important; /* Allow it to grow or fill parent, not exceed window */
+}
+
+/* Ensure grids are responsive within the new layout */
+/* Restore the larger grid item width for a formal look (4 per row on desktop) */
+/* Unified grid item width to 320px (Trip style size) for all home screen sections */
+.persistent-content .cards-grid,
+.persistent-content .cards-grid-3 {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important;
+}
+
+.btn-logout-small {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: transparent;
+    color: #ef4444;
+    border: 1.5px solid #ef4444;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: fit-content;
+    margin-top: 32px;
+}
+
+.btn-logout-small:hover {
+    background: #fef2f2;
+    transform: translateY(-1px);
+}
+
+/* Wishlist Heart Button */
+.wishlist-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(6px);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 5;
+    font-size: 16px;
+    transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.wishlist-btn:hover {
+    transform: scale(1.2);
+    background: white;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+}
+
+.wishlist-btn.wishlisted {
+    background: #fff0f3;
+}
+
+.wishlist-btn.wishlisted:hover {
+    background: #ffe4ea;
+}
+
+/* Photo Collage Layout */
+.article-flex-layout {
+    display: flex;
+    gap: 24px; /* Reduced gap */
+    align-items: stretch; /* Stretch to fill height */
+}
+
+.article-main-text {
+    flex: 1;
+}
+
+.article-collage-sidebar {
+    width: 320px; /* Standard sidebar width for better formal look */
+    position: sticky;
+    top: 20px;
+}
+
+.single-archive-card {
+    width: 100%;
+    aspect-ratio: 4 / 3; /* Formal, standard ratio */
+    overflow: hidden;
+    border-radius: 20px;
+    background: #111;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.single-archive-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s ease;
+}
+
+.single-archive-card:hover img {
+    transform: scale(1.1);
+}
+
+@media (max-width: 1100px) {
+    .article-flex-layout {
+        flex-direction: column;
+    }
+    .article-collage-sidebar {
+        width: 100%;
+        margin-top: 40px;
+    }
+}
+
+@media (max-width: 600px) {
+    .photo-collage-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
