@@ -103,9 +103,9 @@ export default function ExploreScreen({ active, showScreen }) {
                 <div className="explore-map-container glow-teal">
                   <iframe 
                     style={{ width: '100%', height: '100%', border: 'none', filter: 'grayscale(0.2) contrast(1.1)' }}
-                    src={`https://www.google.com/maps/embed/v1/search?key=YOUR_API_KEY_HERE&q=Famous+Places+in+Sri+Lanka&center=7.8731,80.7718&zoom=7`}
-                    // Fallback to a searchable static-ish view if no key
-                    srcDoc={`<style>body{margin:0;overflow:hidden;}iframe{width:100%;height:100%;border:none;}</style><iframe src="https://www.google.com/maps?q=Sri+Lanka+Famous+Destinations&z=7&output=embed"></iframe>`}
+                    src={`https://www.google.com/maps/embed/v1/search?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''}&q=Famous+Places+in+Sri+Lanka&center=7.8731,80.7718&zoom=7`}
+                    // Fallback to a searchable static-ish view if no key or key fails
+                    srcDoc={!process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ? `<style>body{margin:0;overflow:hidden;}iframe{width:100%;height:100%;border:none;}</style><iframe src="https://www.google.com/maps?q=Sri+Lanka+Famous+Destinations&z=7&output=embed"></iframe>` : undefined}
                   ></iframe>
                   <div className="map-overlay-info">
                     <strong>Interstellar Navigation</strong>
