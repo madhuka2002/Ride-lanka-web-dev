@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { useGuideAuth } from "@/context/GuideAuthContext";
+import { useAppMode } from "@/context/AppModeContext";
 import { isAdminEmail } from "@/lib/adminAuth";
 import { useSettings } from "@/context/SettingsContext";
 
@@ -37,6 +39,8 @@ function IconLock() {
 export default function LoginForm({ onSignIn }) {
   const router = useRouter();
   const { signIn } = useAuth();
+  const { guideSignIn } = useGuideAuth();
+  const { isGuideMode } = useAppMode();
   const { t } = useSettings();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -51,10 +55,14 @@ export default function LoginForm({ onSignIn }) {
     setLoading(true);
     setError("");
     try {
-      const signedInUser = await signIn(email, password);
-      if (isAdminEmail(signedInUser?.email)) {
-        router.push("/admin");
-        return;
+      if (isGuideMode) {
+        await guideSignIn(email, password);
+      } else {
+        const signedInUser = await signIn(email, password);
+        if (isAdminEmail(signedInUser?.email)) {
+          router.push("/admin");
+          return;
+        }
       }
       onSignIn();
     } catch (e) {
@@ -63,6 +71,7 @@ export default function LoginForm({ onSignIn }) {
       setLoading(false);
     }
   }
+
 
   return (
     <div id="tab-login" className="auth-form" role="tabpanel" aria-labelledby="auth-tab-login">

@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
+import { useGuideAuth } from "@/context/GuideAuthContext";
+import { useAppMode } from "@/context/AppModeContext";
 import { useSettings } from "@/context/SettingsContext";
 
 const INTEREST_OPTIONS = [
@@ -54,6 +56,8 @@ function IconLock() {
 
 export default function SignUpForm({ onSignUp }) {
   const { signUp } = useAuth();
+  const { guideSignUp } = useGuideAuth();
+  const { isGuideMode } = useAppMode();
   const { t } = useSettings();
   const [step, setStep] = useState(1);
   const [name, setName] = useState("");
@@ -68,14 +72,18 @@ export default function SignUpForm({ onSignUp }) {
   }
 
   async function handleSubmit() {
-    if (interests.length === 0) {
+    if (interests.length === 0 && !isGuideMode) {
       setError(t("signupErrorSelectInterest"));
       return;
     }
     setLoading(true);
     setError("");
     try {
-      await signUp(email, password, name, interests);
+      if (isGuideMode) {
+        await guideSignUp(email, password);
+      } else {
+        await signUp(email, password, name, interests);
+      }
       onSignUp();
     } catch (e) {
       setError(e.message || t("signupErrorFailed"));
@@ -84,19 +92,23 @@ export default function SignUpForm({ onSignUp }) {
     }
   }
 
+
   return (
     <div id="tab-signup" className="auth-form" role="tabpanel" aria-labelledby="auth-tab-signup">
-      <div className="auth-stepper" aria-hidden>
-        <span className={`auth-stepper-dot${step === 1 ? " active" : ""}${step === 2 ? " done" : ""}`}>1</span>
-        <span className={`auth-stepper-line${step === 2 ? " active" : ""}`} />
-        <span className={`auth-stepper-dot${step === 2 ? " active" : ""}`}>2</span>
-      </div>
+
+      {!isGuideMode && (
+        <div className="auth-stepper" aria-hidden>
+          <span className={`auth-stepper-dot${step === 1 ? " active" : ""}${step === 2 ? " done" : ""}`}>1</span>
+          <span className={`auth-stepper-line${step === 2 ? " active" : ""}`} />
+          <span className={`auth-stepper-dot${step === 2 ? " active" : ""}`}>2</span>
+        </div>
+      )}
 
       {step === 1 && (
         <>
           <div className="auth-form-head">
             <h3>{t("signupTitle")}</h3>
-            <p className="subtitle">{t("signupSubtitle")}</p>
+            <p className="subtitle">{isGuideMode ? "Create your professional guide account" : t("signupSubtitle")}</p>
           </div>
           {error ? (
             <div className="auth-alert" role="alert">
@@ -165,13 +177,18 @@ export default function SignUpForm({ onSignUp }) {
                 return;
               }
               setError("");
-              setStep(2);
+              if (isGuideMode) {
+                handleSubmit();
+              } else {
+                setStep(2);
+              }
             }}
           >
-            {t("signupNext")}
+            {isGuideMode ? (loading ? t("signupCreating") : t("signupCreateAccount")) : t("signupNext")}
           </button>
         </>
       )}
+
 
       {step === 2 && (
         <>
