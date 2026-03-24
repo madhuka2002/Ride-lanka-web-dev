@@ -1,8 +1,10 @@
 "use client";
 
 import Sidebar from "../Sidebar";
+import { useSettings } from "@/context/SettingsContext";
 
 export default function CommunityScreen({ active, showScreen }) {
+  const { t } = useSettings();
   const posts = [
     { name: "Jessica Lane", avatar: "JL", gradient: "linear-gradient(135deg,#ec4899,#8b5cf6)", img: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=700&q=80", text: "Just arrived in Santorini and it's even more beautiful than I imagined! The blue domes, the white walls, the incredible sunsets — every photo tells a story.", meta: "Explorer · 48 trips", time: "2h ago", likes: 124, comments: 32 },
     { name: "Ahmed Rashid", avatar: "AR", gradient: "linear-gradient(135deg,#0ba891,#065f52)", img: "https://images.unsplash.com/photo-1573843981267-be1999ff37cd?w=700&q=80", text: "The Maldives is pure paradise. Woke up to turquoise lagoons and crystal-clear waters this morning. The overwater bungalow experience is absolutely surreal!", meta: "Explorer · 22 trips", time: "5h ago", likes: 298, comments: 67 },
@@ -24,9 +26,9 @@ export default function CommunityScreen({ active, showScreen }) {
   return (
     <div id="screen-community" className={`screen ${active ? "active" : ""}`}>
       <div className="main-layout">
-        <Sidebar activeItem="community" logoIcon="🌍" logoText="Dream" logoEm="Trip" userName="Sithil Semitha" userRole="Explorer · Pro" onNavigate={showScreen} />
+        <Sidebar activeItem="community" logoIcon="🌍" logoText="Dream" logoEm="Trip" userName="Sithil Semitha" userRole={t("appRoleExplorerPro")} onNavigate={showScreen} />
         <div className="main-content">
-          <div className="topbar"><div><h1>Community 🌐</h1><div className="subtitle">Connect with fellow travelers</div></div></div>
+          <div className="topbar"><div><h1>{t("communityTitle")}</h1><div className="subtitle">{t("communitySubtitle")}</div></div></div>
           <div className="social-layout">
             <div>
               {posts.map((p, i) => (
