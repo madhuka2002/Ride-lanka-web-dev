@@ -5,15 +5,52 @@ import { useAuth } from "@/context/AuthContext";
 import { useSettings } from "@/context/SettingsContext";
 
 const INTEREST_OPTIONS = [
-  { id: "culture", label: "Culture" },
-  { id: "hiking", label: "Hiking" },
-  { id: "beach", label: "Beach" },
-  { id: "wildlife", label: "Wildlife" },
-  { id: "nature", label: "Nature" },
-  { id: "food", label: "Food" },
-  { id: "adventure", label: "Adventure" },
-  { id: "dance", label: "Dance" },
+  { id: "culture", label: "Culture", emoji: "🏛️" },
+  { id: "hiking", label: "Hiking", emoji: "🥾" },
+  { id: "beach", label: "Beach", emoji: "🏖️" },
+  { id: "wildlife", label: "Wildlife", emoji: "🐘" },
+  { id: "nature", label: "Nature", emoji: "🌿" },
+  { id: "food", label: "Food", emoji: "🍛" },
+  { id: "adventure", label: "Adventure", emoji: "⛰️" },
+  { id: "dance", label: "Dance", emoji: "💃" },
 ];
+
+function IconUser() {
+  return (
+    <svg className="auth-input-icon-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <circle cx="12" cy="8" r="4" stroke="currentColor" strokeWidth="1.75" />
+      <path
+        d="M5 20v-1a7 7 0 0114 0v1"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function IconMail() {
+  return (
+    <svg className="auth-input-icon-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path
+        d="M4 6h16v12H4V6zm0 0 8 6 8-6"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function IconLock() {
+  return (
+    <svg className="auth-input-icon-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.75" />
+      <path d="M8 10V7a4 4 0 118 0v3" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+    </svg>
+  );
+}
 
 export default function SignUpForm({ onSignUp }) {
   const { signUp } = useAuth();
@@ -48,25 +85,76 @@ export default function SignUpForm({ onSignUp }) {
   }
 
   return (
-    <div id="tab-signup" className="auth-form">
+    <div id="tab-signup" className="auth-form" role="tabpanel" aria-labelledby="auth-tab-signup">
+      <div className="auth-stepper" aria-hidden>
+        <span className={`auth-stepper-dot${step === 1 ? " active" : ""}${step === 2 ? " done" : ""}`}>1</span>
+        <span className={`auth-stepper-line${step === 2 ? " active" : ""}`} />
+        <span className={`auth-stepper-dot${step === 2 ? " active" : ""}`}>2</span>
+      </div>
+
       {step === 1 && (
         <>
-          <h3>{t("signupTitle")}</h3>
-          <p className="subtitle">{t("signupSubtitle")}</p>
-          <div className="form-group">
-            <label>{t("signupFullName")}</label>
-            <input type="text" placeholder="Your name" value={name} onChange={(e) => setName(e.target.value)} />
+          <div className="auth-form-head">
+            <h3>{t("signupTitle")}</h3>
+            <p className="subtitle">{t("signupSubtitle")}</p>
           </div>
-          <div className="form-group">
-            <label>Email Address</label>
-            <input type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+          {error ? (
+            <div className="auth-alert" role="alert">
+              <span className="auth-alert-dot" aria-hidden />
+              <span>{error}</span>
+            </div>
+          ) : null}
+          <div className="form-group auth-field">
+            <label htmlFor="signup-name">{t("signupFullName")}</label>
+            <div className="auth-input-shell">
+              <span className="auth-input-icon">
+                <IconUser />
+              </span>
+              <input
+                id="signup-name"
+                type="text"
+                autoComplete="name"
+                placeholder="Your name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
           </div>
-          <div className="form-group">
-            <label>Password</label>
-            <input type="password" placeholder="Min. 6 characters" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <div className="form-group auth-field">
+            <label htmlFor="signup-email">Email Address</label>
+            <div className="auth-input-shell">
+              <span className="auth-input-icon">
+                <IconMail />
+              </span>
+              <input
+                id="signup-email"
+                type="email"
+                autoComplete="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="form-group auth-field">
+            <label htmlFor="signup-password">Password</label>
+            <div className="auth-input-shell">
+              <span className="auth-input-icon">
+                <IconLock />
+              </span>
+              <input
+                id="signup-password"
+                type="password"
+                autoComplete="new-password"
+                placeholder="Min. 6 characters"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
           </div>
           <button
-            className="btn-teal"
+            type="button"
+            className="btn-teal btn-teal-glow"
             onClick={() => {
               if (!name || !email || !password) {
                 setError(t("signupErrorFillAll"));
@@ -82,45 +170,46 @@ export default function SignUpForm({ onSignUp }) {
           >
             {t("signupNext")}
           </button>
-          {error && <p style={{ color: "red", marginTop: 8, fontSize: 13 }}>{error}</p>}
         </>
       )}
 
       {step === 2 && (
         <>
-          <h3>{t("signupInterestsTitle")}</h3>
-          <p className="subtitle">{t("signupInterestsSubtitle")}</p>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10, margin: "16px 0" }}>
-            {INTEREST_OPTIONS.map((opt) => (
-              <button
-                key={opt.id}
-                type="button"
-                onClick={() => toggleInterest(opt.id)}
-                style={{
-                  padding: "10px 6px",
-                  borderRadius: 10,
-                  border: interests.includes(opt.id) ? "2px solid var(--teal)" : "2px solid #e0e0e0",
-                  background: interests.includes(opt.id) ? "#e6f7f5" : "#fafafa",
-                  cursor: "pointer",
-                  fontSize: 12,
-                  color: interests.includes(opt.id) ? "var(--teal)" : "#555",
-                }}
-              >
-                {opt.label}
-              </button>
-            ))}
+          <div className="auth-form-head">
+            <h3>{t("signupInterestsTitle")}</h3>
+            <p className="subtitle">{t("signupInterestsSubtitle")}</p>
+          </div>
+          <div className="auth-interest-hint">{t("authInterestHint")}</div>
+          <div className="auth-interest-grid">
+            {INTEREST_OPTIONS.map((opt) => {
+              const selected = interests.includes(opt.id);
+              return (
+                <button
+                  key={opt.id}
+                  type="button"
+                  onClick={() => toggleInterest(opt.id)}
+                  className={`auth-interest-chip${selected ? " selected" : ""}`}
+                >
+                  <span className="auth-interest-emoji" aria-hidden>
+                    {opt.emoji}
+                  </span>
+                  <span className="auth-interest-label">{opt.label}</span>
+                </button>
+              );
+            })}
           </div>
 
-          {error && <p style={{ color: "red", marginBottom: 8, fontSize: 13 }}>{error}</p>}
+          {error ? (
+            <div className="auth-alert" role="alert">
+              <span className="auth-alert-dot" aria-hidden />
+              <span>{error}</span>
+            </div>
+          ) : null}
 
-          <button className="btn-teal" onClick={handleSubmit} disabled={loading}>
+          <button type="button" className="btn-teal btn-teal-glow" onClick={handleSubmit} disabled={loading}>
             {loading ? t("signupCreating") : t("signupCreateAccount")}
           </button>
-          <button
-            type="button"
-            style={{ marginTop: 10, fontSize: 13, color: "#888", cursor: "pointer", background: "none", border: "none" }}
-            onClick={() => setStep(1)}
-          >
+          <button type="button" className="auth-link-back" onClick={() => setStep(1)}>
             {t("signupBack")}
           </button>
         </>
