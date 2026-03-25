@@ -123,8 +123,8 @@ export default function GuideBookingsScreen({ active, showScreen }) {
                           </div>
 
                           {b.message && (
-                            <div className="booking-message">
-                              <p>"{b.message}"</p>
+                            <div className="booking-message" style={{ background: "var(--gray-50)", borderLeft: "3px solid var(--teal)" }}>
+                              <p style={{ color: "var(--gray-600)" }}>"{b.message}"</p>
                             </div>
                           )}
 
@@ -157,10 +157,10 @@ export default function GuideBookingsScreen({ active, showScreen }) {
                     {incoming
                       .filter((b) => b.status !== "pending")
                       .map((b) => (
-                        <div key={b.id} className="past-booking-item">
+                        <div key={b.id} className="past-booking-item" style={{ background: "var(--gray-50)", border: "1px solid var(--gray-100)" }}>
                           <div className="past-info">
-                            <span className="past-name">{b.travellerName}</span>
-                            <span className="past-meta">{b.destination} • {b.tourDate}</span>
+                            <span className="past-name" style={{ color: "var(--text)" }}>{b.travellerName}</span>
+                            <span className="past-meta" style={{ color: "var(--gray-400)" }}>{b.destination} • {b.tourDate}</span>
                           </div>
                           <span className={`status-tag ${b.status}`}>
                             {b.status}

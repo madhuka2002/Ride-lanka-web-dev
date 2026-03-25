@@ -167,12 +167,23 @@ export async function getQuests(token) {
     return res.json(); // { quests: [] }
 }
 
-export async function createQuest(token, { title, description, reward }) {
+export async function createQuest(token, questData) {
     const url = `${BACKEND}/api/quests`;
     const res = await safeFetch(url, {
         method: "POST",
         headers: await authHeaders(token),
-        body: JSON.stringify({ title, description, reward }),
+        body: JSON.stringify(questData),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
+}
+
+export async function updateQuest(token, questId, updates) {
+    const url = `${BACKEND}/api/quests/${questId}`;
+    const res = await safeFetch(url, {
+        method: "PUT",
+        headers: await authHeaders(token),
+        body: JSON.stringify(updates),
     });
     if (!res.ok) throw new Error(await res.text());
     return res.json();
@@ -193,6 +204,17 @@ export async function completeQuest(token, questId) {
     const res = await safeFetch(url, {
         method: "POST",
         headers: await authHeaders(token),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
+}
+
+export async function verifyQuest(token, questId, story) {
+    const url = `${BACKEND}/api/quests/${questId}/verify`;
+    const res = await safeFetch(url, {
+        method: "POST",
+        headers: await authHeaders(token),
+        body: JSON.stringify({ story }),
     });
     if (!res.ok) throw new Error(await res.text());
     return res.json();

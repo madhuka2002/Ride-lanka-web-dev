@@ -173,7 +173,7 @@ export default function GuideHubScreen({ active, showScreen }) {
                 Your professional guide account has been {accountStatus} by the Ride Lanka administration. 
                 During this time, your profile is hidden from travelers and you cannot manage bookings or stories.
               </p>
-              <div style={{ padding: 16, background: "rgba(255, 255, 255, 0.03)", borderRadius: 12, fontSize: 14, color: "#64748b" }}>
+              <div style={{ padding: 16, background: "var(--gray-100)", borderRadius: 12, fontSize: 14, color: "var(--gray-600)" }}>
                 Please contact support at <strong>admin@ridelanka.com</strong> for more information or to appeal this decision.
               </div>
               <button className="btn-teal" style={{ marginTop: 32 }} onClick={() => setMode("traveler")}>
@@ -295,9 +295,9 @@ export default function GuideHubScreen({ active, showScreen }) {
                       cursor: "pointer",
                       padding: "10px 14px",
                       borderRadius: 10,
-                      background: languages.includes(opt.id) ? "rgba(11, 168, 145, 0.1)" : "rgba(255, 255, 255, 0.03)",
+                      background: languages.includes(opt.id) ? "rgba(11, 168, 145, 0.1)" : "var(--gray-50)",
                       border: "1.5px solid",
-                      borderColor: languages.includes(opt.id) ? "var(--teal)" : "rgba(255, 255, 255, 0.1)",
+                      borderColor: languages.includes(opt.id) ? "var(--teal)" : "var(--gray-100)",
                       transition: "all 0.2s"
                     }}>
                       <input 

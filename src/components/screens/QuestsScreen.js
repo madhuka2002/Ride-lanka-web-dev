@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Sidebar from "../Sidebar";
 import { useAuth } from "@/context/AuthContext";
-import { getQuests, completeQuest, getUserProfile } from "@/lib/api";
+import { getQuests, verifyQuest, getUserProfile } from "@/lib/api";
 import { useSettings } from "@/context/SettingsContext";
 
 export default function QuestsScreen({ active, showScreen }) {
@@ -13,6 +13,10 @@ export default function QuestsScreen({ active, showScreen }) {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [completingId, setCompletingId] = useState(null);
+  const [verifyId, setVerifyId] = useState(null);
+  const [story, setStory] = useState("");
+  const [verifying, setVerifying] = useState(false);
+  const [aiMessage, setAiMessage] = useState("");
   const displayName = user?.displayName || user?.email?.split("@")[0] || "traveler";
 
   useEffect(() => {
@@ -37,18 +41,25 @@ export default function QuestsScreen({ active, showScreen }) {
     }
   }
 
-  async function handleCompleteQuest(questId) {
-    if (!token) return;
+  async function handleVerifyQuest() {
+    if (!token || !verifyId || !story) return;
     try {
-      setCompletingId(questId);
-      const res = await completeQuest(token, questId);
-      alert(`Quest completed! You gained ${res.xpGained} XP. Check your profile.`);
-      // Re-fetch to update completedQuests array
-      await loadQuests();
+      setVerifying(true);
+      setAiMessage("Ride-Lanka AI is verifying your story...");
+      const res = await verifyQuest(token, verifyId, story);
+      setAiMessage(`✅ ${res.message}`);
+      
+      // Wait a bit to show success message then close and reload
+      setTimeout(async () => {
+        setVerifyId(null);
+        setStory("");
+        setAiMessage("");
+        await loadQuests();
+      }, 2500);
     } catch (err) {
-      alert("Failed to complete quest: " + err.message);
+      setAiMessage(`❌ ${err.message}`);
     } finally {
-      setCompletingId(null);
+      setVerifying(false);
     }
   }
 
@@ -86,10 +97,36 @@ export default function QuestsScreen({ active, showScreen }) {
                   }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                        {q.badgeImage && (
-                          <img src={q.badgeImage} alt="badge" style={{ width: 44, height: 44, objectFit: "cover", borderRadius: "8px", boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }} />
-                        )}
-                        <h3 style={{ margin: 0, fontSize: "1.1rem", color: "var(--text)" }}>{q.title}</h3>
+                        <span style={{ 
+                          fontSize: "2rem", 
+                          width: 44, 
+                          height: 44, 
+                          display: "flex", 
+                          alignItems: "center", 
+                          justifyContent: "center",
+                          background: "var(--gray-50)",
+                          borderRadius: "12px",
+                          boxShadow: "inset 0 2px 4px rgba(0,0,0,0.05)"
+                        }}>
+                          {q.badgeImage || "🥉"}
+                        </span>
+                        <div>
+                          <h3 style={{ margin: 0, fontSize: "1.1rem", color: "var(--text)" }}>{q.title}</h3>
+                          <div style={{ display: "flex", gap: "6px", marginTop: "4px" }}>
+                            <span style={{ 
+                              fontSize: "0.75rem", 
+                              fontWeight: "600",
+                              textTransform: "uppercase",
+                              letterSpacing: "0.5px",
+                              color: q.level === 'gold' ? '#b45309' : q.level === 'silver' ? '#475569' : '#92400e',
+                              background: q.level === 'gold' ? '#fef3c7' : q.level === 'silver' ? '#f1f5f9' : '#ffedd5',
+                              padding: "2px 8px",
+                              borderRadius: "4px"
+                            }}>
+                              {q.level || 'bronze'}
+                            </span>
+                          </div>
+                        </div>
                       </div>
                       <span style={{ 
                         background: "var(--teal-light)", 
@@ -105,17 +142,16 @@ export default function QuestsScreen({ active, showScreen }) {
                     <p style={{ margin: 0, color: "var(--gray-600)", lineHeight: "1.5" }}>{q.description}</p>
                     <div style={{ marginTop: "12px" }}>
                       {profile?.completedQuests?.includes(q.id) ? (
-                        <button className="btn-outline" style={{ fontSize: "0.9rem", padding: "6px 12px", border: "2px solid var(--gray-400)", color: "var(--gray-600)", background: "var(--gray-100)", cursor: "not-allowed" }} disabled>
-                          {t("questsCompleted")}
-                        </button>
+                        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                           <span style={{ fontSize: "0.85rem", color: "var(--teal)", fontWeight: "600" }}>✓ {t("questsCompleted")}</span>
+                        </div>
                       ) : (
                         <button 
                           className="btn-outline" 
-                          style={{ fontSize: "0.9rem", padding: "6px 12px", border: "2px solid var(--teal)", color: "var(--teal)", background: "transparent", cursor: completingId === q.id ? "not-allowed" : "pointer" }}
-                          onClick={() => handleCompleteQuest(q.id)}
-                          disabled={completingId === q.id}
+                          style={{ fontSize: "0.9rem", padding: "8px 16px", border: "2px solid var(--teal)", color: "var(--teal)", background: "transparent", cursor: "pointer", borderRadius: "8px", fontWeight: "600" }}
+                          onClick={() => setVerifyId(q.id)}
                         >
-                          {completingId === q.id ? t("questsCompleting") : t("questsCompleteQuest")}
+                          ✨ Share Experience to Complete
                         </button>
                       )}
                     </div>
@@ -126,6 +162,69 @@ export default function QuestsScreen({ active, showScreen }) {
           </div>
         </div>
       </div>
+
+      {/* AI Verification Modal-like Overlay */}
+      {verifyId && (
+        <div style={{
+          position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
+          background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center",
+          zIndex: 1000, backdropFilter: "blur(4px)"
+        }}>
+          <div style={{
+            background: "var(--white)", padding: "32px", borderRadius: "20px", maxWidth: "500px", width: "90%",
+            boxShadow: "0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04)"
+          }}>
+            <h2 style={{ margin: "0 0 8px 0" }}>Share your Story ✨</h2>
+            <p style={{ color: "var(--gray-600)", marginBottom: "20px" }}>
+              Tell us a bit about your visit to this location. Ride-Lanka AI will verify your experience to award your reward.
+            </p>
+            
+            <textarea 
+              placeholder="e.g. The climb to the top of Sigiriya was challenging but amazing! The view from the Lion's Paw is unforgettable..."
+              value={story}
+              onChange={(e) => setStory(e.target.value)}
+              disabled={verifying}
+              style={{
+                width: "100%", height: "120px", padding: "12px", borderRadius: "12px", border: "1px solid var(--gray-200)",
+                fontSize: "1rem", marginBottom: "16px", resize: "none", outline: "none"
+              }}
+            />
+            
+            {aiMessage && (
+              <div style={{ 
+                padding: "12px", borderRadius: "8px", marginBottom: "16px", 
+                background: aiMessage.includes('❌') ? '#fef2f2' : aiMessage.includes('✅') ? '#f0fdf4' : '#f0f9ff',
+                color: aiMessage.includes('❌') ? '#991b1b' : aiMessage.includes('✅') ? '#166534' : '#075985',
+                fontSize: "0.9rem"
+              }}>
+                {aiMessage}
+              </div>
+            )}
+
+            <div style={{ display: "flex", gap: "12px" }}>
+              <button 
+                onClick={handleVerifyQuest}
+                disabled={verifying || story.trim().split(/\s+/).length < 5}
+                className="btn-solid"
+                style={{ flex: 1, padding: "12px", borderRadius: "12px", background: "var(--teal)", color: "white", border: "none", cursor: "pointer", fontWeight: "600" }}
+              >
+                {verifying ? "Verifying..." : "Submit for AI Review"}
+              </button>
+              {!verifying && (
+                <button 
+                  onClick={() => { setVerifyId(null); setStory(""); setAiMessage(""); }}
+                  style={{ padding: "12px 20px", borderRadius: "12px", background: "var(--gray-100)", border: "none", cursor: "pointer" }}
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
+            <p style={{ fontSize: "0.75rem", color: "var(--gray-400)", textAlign: "center", marginTop: "16px" }}>
+              Powered by Ride-Lanka Pro AI Verification Engine
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

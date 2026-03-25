@@ -12,8 +12,8 @@ import {
   GUIDE_EXPERTISE_OPTIONS,
 } from "@/lib/tourGuides";
 
-function expertiseLabel(id) {
-  return GUIDE_EXPERTISE_OPTIONS.find((o) => o.id === id)?.label || id;
+function expertiseLabel(id, t) {
+  return t("exp" + id.charAt(0).toUpperCase() + id.slice(1));
 }
 
 export default function GuideDetailScreen({ active, showScreen, guideId }) {
@@ -169,7 +169,7 @@ export default function GuideDetailScreen({ active, showScreen, guideId }) {
                   <div className="tag-row" style={{ marginBottom: 20 }}>
                     {guide.expertise.map((id) => (
                       <span key={id} className="tag">
-                        {expertiseLabel(id)}
+                        {expertiseLabel(id, t)}
                       </span>
                     ))}
                   </div>
@@ -177,7 +177,7 @@ export default function GuideDetailScreen({ active, showScreen, guideId }) {
 
                 {guide.languages?.length ? (
                   <p className="detail-desc">
-                    <strong>{t("guidesLanguages")}:</strong> {guide.languages.join(", ")}
+                    <strong>{t("guidesLanguages")}:</strong> {guide.languages.map(langId => t("lang" + langId.charAt(0).toUpperCase() + langId.slice(1))).join(", ")}
                   </p>
                 ) : null}
 

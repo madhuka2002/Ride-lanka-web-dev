@@ -146,7 +146,7 @@ export default function ProfileScreen({ active, showScreen }) {
         <div className="main-content">
           <div className="topbar">
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
-              <h1>{t("profileTitle")}</h1>
+              <h1>{t("Profile")}</h1>
               {!isEditing && (
                 <button className="btn-primary" onClick={handleEditClick} style={{ padding: "8px 16px", fontSize: "0.95rem", background: "var(--teal)", color: "white", border: "none", borderRadius: "8px", cursor: "pointer", fontWeight: "bold" }}>
                   ✎ {t("profileEdit")}
@@ -163,14 +163,14 @@ export default function ProfileScreen({ active, showScreen }) {
                 gap: 32, 
                 marginBottom: 48,
                 padding: "24px 32px",
-                background: "rgba(255,255,255,0.02)",
-                borderRadius: 32,
-                border: "1px solid rgba(255,255,255,0.05)",
-                backdropFilter: "blur(12px)"
+                background: "var(--gray-50)",
+                borderRadius: 24,
+                border: "1px solid var(--gray-100)",
+                boxShadow: "var(--shadow-sm)"
               }}>
                 <div style={{ position: "relative" }}>
                   {(isGuideMode ? user?.photoURL : profile?.profilePic) ? (
-                    <img src={isGuideMode ? user.photoURL : profile.profilePic} style={{ width: 120, height: 120, borderRadius: "50%", objectFit: "cover", border: "4px solid rgba(255,255,255,0.1)", boxShadow: "0 8px 32px rgba(0,0,0,0.3)" }} alt="Profile Avatar" />
+                    <img src={isGuideMode ? user.photoURL : profile.profilePic} style={{ width: 120, height: 120, borderRadius: "50%", objectFit: "cover", border: "4px solid var(--gray-100)", boxShadow: "var(--shadow)" }} alt="Profile Avatar" />
                   ) : (
                     <div style={{ width: 120, height: 120, borderRadius: "50%", background: "linear-gradient(135deg, var(--teal), #0891b2)", color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "3rem", fontWeight: 800, textShadow: "0 2px 4px rgba(0,0,0,0.2)" }}>
                       {displayName.charAt(0).toUpperCase()}
@@ -179,16 +179,16 @@ export default function ProfileScreen({ active, showScreen }) {
                   <div style={{ position: "absolute", bottom: 8, right: 8, width: 24, height: 24, background: "#22c55e", borderRadius: "50%", border: "4px solid #0f172a" }} title="Online"></div>
                 </div>
                 <div>
-                  <h2 style={{ margin: "0 0 6px 0", fontSize: "2.4rem", fontWeight: 800, letterSpacing: -1, color: "white" }}>{displayName}</h2>
+                  <h2 style={{ margin: "0 0 6px 0", fontSize: "2.4rem", fontWeight: 800, letterSpacing: -1, color: "var(--text)" }}>{displayName}</h2>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
                     <span style={{ 
                       padding: "4px 12px", 
                       borderRadius: 100, 
-                      background: "rgba(255,255,255,0.05)", 
-                      color: "var(--gray-400)", 
+                      background: "var(--teal-light)", 
+                      color: "var(--teal-dark)", 
                       fontSize: 13, 
-                      fontWeight: 500,
-                      border: "1px solid rgba(255,255,255,0.1)"
+                      fontWeight: 600,
+                      border: "1px solid var(--teal-mid)"
                     }}>
                       {user?.email || "-"}
                     </span>
@@ -274,11 +274,10 @@ export default function ProfileScreen({ active, showScreen }) {
               <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 32 }}>
                 <div style={{ 
                   padding: 32, 
-                  background: "rgba(255,255,255,0.02)", 
-                  backdropFilter: "blur(16px)",
+                  background: "var(--gray-50)", 
                   borderRadius: 24,
-                  border: "1px solid rgba(255,255,255,0.05)",
-                  boxShadow: "0 8px 32px rgba(0,0,0,0.2)",
+                  border: "1px solid var(--gray-100)",
+                  boxShadow: "var(--shadow-sm)",
                   transition: "transform 0.3s ease",
                   cursor: "default"
                 }}>
@@ -298,12 +297,12 @@ export default function ProfileScreen({ active, showScreen }) {
                             <span key={exp} style={{ 
                               padding: "6px 14px", 
                               borderRadius: 12, 
-                              background: "linear-gradient(135deg, rgba(11, 168, 145, 0.2), rgba(11, 168, 145, 0.05))", 
-                              color: "white", 
+                              background: "var(--teal-light)", 
+                              color: "var(--teal-dark)", 
                               fontSize: 13, 
-                              fontWeight: 500,
-                              border: "1px solid rgba(11, 168, 145, 0.3)",
-                              boxShadow: "0 4px 12px rgba(11, 168, 145, 0.1)"
+                              fontWeight: 600,
+                              border: "1px solid var(--teal-mid)",
+                              boxShadow: "var(--shadow-sm)"
                             }}>
                               {exp.charAt(0).toUpperCase() + exp.slice(1)}
                             </span>
@@ -327,11 +326,10 @@ export default function ProfileScreen({ active, showScreen }) {
 
                 <div style={{ 
                   padding: 32, 
-                  background: "rgba(255,255,255,0.02)", 
-                  backdropFilter: "blur(16px)",
+                  background: "var(--gray-50)", 
                   borderRadius: 24,
-                  border: "1px solid rgba(255,255,255,0.05)",
-                  boxShadow: "0 8px 32px rgba(0,0,0,0.2)"
+                  border: "1px solid var(--gray-100)",
+                  boxShadow: "var(--shadow-sm)"
                 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 24 }}>
                     <span style={{ fontSize: 24 }}>💼</span>
@@ -340,11 +338,11 @@ export default function ProfileScreen({ active, showScreen }) {
 
                   <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
-                      <div style={{ background: "rgba(255,255,255,0.03)", padding: 16, borderRadius: 16, border: "1px solid rgba(255,255,255,0.05)" }}>
+                      <div style={{ background: "var(--white)", padding: 16, borderRadius: 16, border: "1px solid var(--gray-100)" }}>
                         <small style={{ color: "var(--gray-400)", textTransform: "uppercase", fontSize: 10, fontWeight: 700, display: "block", marginBottom: 4 }}>Tenure</small>
                         <p style={{ margin: 0, fontSize: 18, fontWeight: 700 }}>{user?.experienceYears || 0} <span style={{ fontSize: 12, fontWeight: 400, color: "var(--gray-400)" }}>Years</span></p>
                       </div>
-                      <div style={{ background: "rgba(255,255,255,0.03)", padding: 16, borderRadius: 16, border: "1px solid rgba(255,255,255,0.05)" }}>
+                      <div style={{ background: "var(--white)", padding: 16, borderRadius: 16, border: "1px solid var(--gray-100)" }}>
                         <small style={{ color: "var(--gray-400)", textTransform: "uppercase", fontSize: 10, fontWeight: 700, display: "block", marginBottom: 4 }}>Rate</small>
                         <p style={{ margin: 0, fontSize: 18, fontWeight: 700, color: "var(--teal)" }}>{user?.hourlyRate || "$25"}<span style={{ fontSize: 12, fontWeight: 400, color: "var(--gray-400)" }}>/hr</span></p>
                       </div>
@@ -405,11 +403,28 @@ export default function ProfileScreen({ active, showScreen }) {
                     <p style={{ color: "var(--gray-400)", fontSize: "0.95rem" }}>No badges earned yet. Complete quests to collect them!</p>
                   ) : (
                     <div className="honeycomb">
-                      {profile.badges.map(b => (
-                        <div key={b.id} className="hexagon" title={b.name} style={{ border: `1px solid ${getLevelDetails(profile.xp).color}33` }}>
-                          {b.url && <img src={b.url} alt={b.name} />}
-                        </div>
-                      ))}
+                      {profile.badges.map(b => {
+                        const isEmoji = !b.url || (!b.url.startsWith("http") && !b.url.startsWith("data:image"));
+                        return (
+                          <div key={b.id} className="hexagon" title={b.name} style={{ border: `1px solid ${getLevelDetails(profile.xp).color}33`, position: "relative" }}>
+                            {isEmoji ? (
+                              <div style={{ 
+                                position: "relative", zIndex: 2, 
+                                background: "rgba(255,255,255,0.95)", 
+                                width: "54px", height: "54px", 
+                                borderRadius: "50%", 
+                                display: "flex", alignItems: "center", justifyContent: "center",
+                                boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1), inset 0 2px 4px rgba(0,0,0,0.05)",
+                                border: "1px solid rgba(0,0,0,0.05)"
+                              }}>
+                                <span style={{ fontSize: "2rem", filter: "drop-shadow(0 2px 2px rgba(0,0,0,0.1))" }}>{b.url || "🥉"}</span>
+                              </div>
+                            ) : (
+                              <img src={b.url} alt={b.name} style={{ width: "100%", height: "100%", objectFit: "cover", position: "relative", zIndex: 2 }} />
+                            )}
+                          </div>
+                        );
+                      })}
                     </div>
                   )}
                 </div>
@@ -434,8 +449,8 @@ export default function ProfileScreen({ active, showScreen }) {
               fontSize: 14, 
               fontWeight: 600, 
               color: "#ff4757",
-              background: "rgba(255, 71, 87, 0.05)",
-              border: "1px solid rgba(255, 71, 87, 0.1)",
+              background: "var(--gray-100)",
+              border: "1px solid var(--gray-200)",
               borderRadius: 12,
               cursor: "pointer",
               transition: "all 0.2s"

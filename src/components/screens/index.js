@@ -12,6 +12,7 @@ export { default as NotificationsScreen } from "./NotificationsScreen";
 export { default as SettingsScreen } from "./SettingsScreen";
 export { default as QuestsScreen } from "./QuestsScreen";
 export { default as ExploreScreen } from "./ExploreScreen";
+export { default as DiscoveryHubScreen } from "./DiscoveryHubScreen";
 export { default as TourGuidesScreen } from "./TourGuidesScreen";
 export { default as GuideDetailScreen } from "./GuideDetailScreen";
 export { default as GuideHubScreen } from "./GuideHubScreen";

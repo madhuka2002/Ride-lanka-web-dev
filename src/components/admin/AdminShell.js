@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { getQuests, createQuest, deleteQuest, getSystemSettings, updateSystemSettings } from "@/lib/api";
+import { getQuests, createQuest, updateQuest, deleteQuest, getSystemSettings, updateSystemSettings } from "@/lib/api";
 import { addDoc, collection, collectionGroup, deleteDoc, doc, getDoc, getDocs, onSnapshot, orderBy, query, updateDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
@@ -381,7 +381,9 @@ function AdminQuests() {
   const [error, setError] = useState(null);
   
   const [isCreating, setIsCreating] = useState(false);
-  const [formData, setFormData] = useState({ title: "", description: "", reward: "", badgeImage: "" });
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingQuestId, setEditingQuestId] = useState(null);
+  const [formData, setFormData] = useState({ title: "", description: "", reward: "", badgeImage: "", level: "bronze" });
 
   useEffect(() => {
     loadQuests();
@@ -390,8 +392,7 @@ function AdminQuests() {
   async function loadQuests() {
     try {
       setLoading(true);
-      const token = await window.authContextTokenGetter?.(); // Hack to get token if needed, wait.
-      const res = await getQuests("dev-admin-token"); // using demo token for now based on Admin access
+      const res = await getQuests("dev-admin-token"); // using demo token
       setQuests(res.quests || []);
     } catch (err) {
       console.error(err);
@@ -401,33 +402,55 @@ function AdminQuests() {
     }
   }
 
-  function handleFileChange(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      setFormData(prev => ({ ...prev, badgeImage: ev.target.result }));
-    };
-    reader.readAsDataURL(file);
-  }
-
-  async function handleCreate(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     if (isCreating) return;
     if (!formData.title || !formData.description) return;
+
+    const BADGE_EMOJIS = {
+      bronze: "🥉",
+      silver: "🥈",
+      gold: "🥇"
+    };
+
+    const finalData = {
+      ...formData,
+      badgeImage: BADGE_EMOJIS[formData.level] || BADGE_EMOJIS.bronze
+    };
+
     try {
       setIsCreating(true);
-      await createQuest("dev-admin-token", formData);
-      setFormData({ title: "", description: "", reward: "", badgeImage: "" });
-      // Clear file input visually
-      const fileInput = document.getElementById("badge-upload");
-      if (fileInput) fileInput.value = "";
+      if (isEditing) {
+        await updateQuest("dev-admin-token", editingQuestId, finalData);
+      } else {
+        await createQuest("dev-admin-token", finalData);
+      }
+      resetForm();
       await loadQuests();
     } catch (err) {
-      alert("Failed to create quest: " + err.message);
+      alert(`Failed to ${isEditing ? "update" : "create"} quest: ` + err.message);
     } finally {
       setIsCreating(false);
     }
+  }
+
+  function handleEdit(q) {
+    setIsEditing(true);
+    setEditingQuestId(q.id);
+    setFormData({
+      title: q.title || "",
+      description: q.description || "",
+      reward: q.reward || "",
+      badgeImage: q.badgeImage || "",
+      level: q.level || "bronze"
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function resetForm() {
+    setIsEditing(false);
+    setEditingQuestId(null);
+    setFormData({ title: "", description: "", reward: "", badgeImage: "", level: "bronze" });
   }
 
   async function handleDelete(id) {
@@ -447,7 +470,7 @@ function AdminQuests() {
         Create and manage broadcast quests for travelers.
       </p>
 
-      <form className="admin-form" onSubmit={handleCreate} style={{ display: "flex", gap: "12px", marginBottom: "32px", flexWrap: "wrap", background: "#f8fafc", padding: "16px", borderRadius: "8px" }}>
+      <form className="admin-form" onSubmit={handleSubmit} style={{ display: "flex", gap: "12px", marginBottom: "32px", flexWrap: "wrap", background: "#f8fafc", padding: "16px", borderRadius: "8px" }}>
         <input 
           type="text" 
           placeholder="Quest Title" 
@@ -471,23 +494,23 @@ function AdminQuests() {
           onChange={e => setFormData({ ...formData, reward: e.target.value })} 
           style={{ flex: "1 1 150px", padding: "8px" }}
         />
+        <select
+          value={formData.level}
+          onChange={e => setFormData({ ...formData, level: e.target.value })}
+          style={{ flex: "1 1 120px", padding: "8px", border: "1px solid #ddd", borderRadius: "4px" }}
+        >
+          <option value="bronze">🥉 Bronze</option>
+          <option value="silver">🥈 Silver</option>
+          <option value="gold">🥇 Gold</option>
+        </select>
         <button type="submit" disabled={isCreating} className="admin-btn-solid" style={{ background: "#0d9488", color: "white", padding: "8px 16px", border: "none", borderRadius: "4px", cursor: "pointer" }}>
-          {isCreating ? "Adding..." : "+ Create Quest"}
+          {isCreating ? (isEditing ? "Updating..." : "Adding...") : (isEditing ? "Update Quest" : "+ Create Quest")}
         </button>
-
-        <div style={{ flex: "1 1 100%", marginTop: "8px" }}>
-          <label style={{ fontSize: "0.85rem", color: "#64748b", display: "block", marginBottom: "4px" }}>Badge Image (PNG)</label>
-          <input 
-            id="badge-upload"
-            type="file" 
-            accept="image/png, image/jpeg" 
-            onChange={handleFileChange}
-            style={{ padding: "4px", fontSize: "0.9rem" }}
-          />
-          {formData.badgeImage && (
-            <img src={formData.badgeImage} alt="Preview" style={{ height: "40px", width: "40px", objectFit: "cover", marginLeft: "12px", borderRadius: "4px", verticalAlign: "middle" }} />
-          )}
-        </div>
+        {isEditing && (
+          <button type="button" onClick={resetForm} className="admin-btn-outline" style={{ padding: "8px 16px", borderRadius: "4px", cursor: "pointer" }}>
+            Cancel
+          </button>
+        )}
       </form>
 
       {error && <p style={{ color: "red" }}>{error}</p>}
@@ -499,6 +522,7 @@ function AdminQuests() {
               <tr>
                 <th>Title</th>
                 <th>Description</th>
+                <th>Level</th>
                 <th>Reward</th>
                 <th>Created</th>
                 <th>Actions</th>
@@ -506,29 +530,41 @@ function AdminQuests() {
             </thead>
             <tbody>
               {quests.length === 0 ? (
-                <tr><td colSpan="4">No quests found. Create one above!</td></tr>
+                <tr><td colSpan="6">No quests found. Create one above!</td></tr>
               ) : (
                 quests.map(q => (
                   <tr key={q.id}>
                     <td>
                       <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                        {q.badgeImage && (
-                          <img src={q.badgeImage} alt="badge" style={{ width: 32, height: 32, borderRadius: 4, objectFit: "cover" }} />
-                        )}
+                        <span style={{ fontSize: "1.5rem" }}>{q.badgeImage || "🥉"}</span>
                         <strong>{q.title}</strong>
                       </div>
                     </td>
                     <td>{q.description}</td>
+                    <td>
+                      <span className={`admin-badge admin-badge-${q.level === "gold" ? "amber" : q.level === "silver" ? "slate" : "slate"}`} style={{ textTransform: "capitalize", display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                        {q.level === 'gold' ? '🥇' : q.level === 'silver' ? '🥈' : '🥉'} {q.level || "bronze"}
+                      </span>
+                    </td>
                     <td><span className="admin-badge admin-badge-teal">{q.reward}</span></td>
                     <td>{new Date(q.createdAt).toLocaleDateString()}</td>
                     <td>
-                      <button 
-                        onClick={() => handleDelete(q.id)}
-                        className="admin-btn-outline" 
-                        style={{ border: "1px solid #ef4444", color: "#ef4444", padding: "4px 8px", fontSize: "0.8rem", cursor: "pointer" }}
-                      >
-                        Delete
-                      </button>
+                      <div style={{ display: "flex", gap: "8px" }}>
+                        <button 
+                          onClick={() => handleEdit(q)}
+                          className="admin-btn-outline" 
+                          style={{ border: "1px solid #0d9488", color: "#0d9488", padding: "4px 8px", fontSize: "0.8rem", cursor: "pointer" }}
+                        >
+                          Edit
+                        </button>
+                        <button 
+                          onClick={() => handleDelete(q.id)}
+                          className="admin-btn-outline" 
+                          style={{ border: "1px solid #ef4444", color: "#ef4444", padding: "4px 8px", fontSize: "0.8rem", cursor: "pointer" }}
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))

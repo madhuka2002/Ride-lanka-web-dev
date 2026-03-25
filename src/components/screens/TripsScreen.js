@@ -361,7 +361,7 @@ export default function TripsScreen({ active, showScreen }) {
   return (
     <div id="screen-trips" className={`screen ${active ? "active" : ""}`}>
       <div className="main-layout">
-        <Sidebar activeItem="trips" logoIcon="🌍" logoText="Dream" logoEm="Trip" userName="Sithil Semitha" userRole={t("appRoleExplorerPro")} onNavigate={showScreen} />
+        <Sidebar activeItem="trips" logoIcon="🌍" logoText="Dream" logoEm="Trip" userRole={t("appRoleExplorerPro")} onNavigate={showScreen} />
         <div className="main-content">
           <div className="topbar">
             <div><h1>{t("tripsTitle")}</h1><div className="subtitle">{t("tripsSubtitle")}</div></div>
@@ -689,7 +689,7 @@ export default function TripsScreen({ active, showScreen }) {
                                     borderRadius: 10,
                                     padding: "9px 8px",
                                     background: activeFavorite ? "var(--teal-light)" : "var(--white)",
-                                    color: activeFavorite ? "var(--teal-dark)" : "var(--gray-600)",
+                                    color: activeFavorite ? "var(--teal-dark)" : "var(--gray-400)",
                                     fontSize: 12,
                                     fontWeight: 700,
                                     cursor: "pointer",
@@ -713,7 +713,7 @@ export default function TripsScreen({ active, showScreen }) {
                         {loadingPlan ? "Generating..." : "Generate Route with AI"}
                       </button>
                     ) : (
-                      <button type="button" className="btn-teal" style={{ flex: 1, background: "var(--gray-800)", border: "none" }} onClick={() => setIsEditing(true)}>
+                      <button type="button" className="btn-teal" style={{ flex: 1, background: "var(--gray-100)", color: "var(--text)", border: "none" }} onClick={() => setIsEditing(true)}>
                         ✎ Edit Details
                       </button>
                     )}
@@ -747,7 +747,7 @@ export default function TripsScreen({ active, showScreen }) {
                       </div>
 
                       {!isEditing && (
-                        <div style={{ background: "var(--teal-light)", padding: "10px 14px", borderRadius: 10, marginBottom: 16, border: "1px solid #b2ece3" }}>
+                        <div style={{ background: "var(--teal-light)", padding: "10px 14px", borderRadius: 10, marginBottom: 16, border: "1px solid var(--gray-100)" }}>
                           <div style={{ fontSize: 12, fontWeight: 700, color: "var(--teal-dark)", marginBottom: 6 }}>Active Route Algorithm</div>
                           <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "center" }}>
                             <label style={{ display: "flex", alignItems: "center", gap: 6, cursor: "pointer", fontSize: 13, color: "var(--gray-800)", fontWeight: 600 }}>
@@ -765,7 +765,7 @@ export default function TripsScreen({ active, showScreen }) {
                             <button
                               onClick={applyAlgorithm}
                               disabled={loadingPlan || plannedStops.length < 2}
-                              style={{ marginLeft: "auto", background: "var(--teal-dark)", color: "white", padding: "4px 12px", borderRadius: 6, fontSize: 12, fontWeight: 700, border: "none", cursor: (loadingPlan || plannedStops.length < 2) ? "not-allowed" : "pointer" }}
+                              style={{ marginLeft: "auto", background: "var(--teal)", color: "white", padding: "6px 12px", borderRadius: 6, fontSize: 12, fontWeight: 700, border: "none", cursor: (loadingPlan || plannedStops.length < 2) ? "not-allowed" : "pointer" }}
                             >
                               {loadingPlan ? "Applying..." : "Apply Algorithm"}
                             </button>
@@ -823,8 +823,8 @@ export default function TripsScreen({ active, showScreen }) {
                                   type="button"
                                   onClick={() => setPlannedStops(prev => prev.filter((_, idx) => idx !== i))}
                                   style={{
-                                    border: "1px solid #fecaca",
-                                    background: "#fef2f2",
+                                    border: "1px solid rgba(239, 68, 68, 0.2)",
+                                    background: "rgba(239, 68, 68, 0.1)",
                                     color: "#ef4444",
                                     padding: "6px 10px",
                                     borderRadius: 6,
@@ -841,8 +841,8 @@ export default function TripsScreen({ active, showScreen }) {
                             </div>
                             {stop.stop_note && <div style={{ fontSize: 12, color: "var(--teal)", marginTop: 8, fontWeight: 600 }}>💡 {stop.stop_note}</div>}
 
-                            <div style={{ marginTop: 14, background: "white", padding: 12, borderRadius: 10, border: "1px solid var(--gray-200)" }}>
-                              <div style={{ fontSize: 12, fontWeight: 700, color: "var(--gray-700)", marginBottom: 8 }}>📝 Your Memory Journal</div>
+                            <div style={{ marginTop: 14, background: "var(--white)", padding: 12, borderRadius: 10, border: "1px solid var(--gray-200)" }}>
+                              <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text)", marginBottom: 8, opacity: 0.8 }}>📝 Your Memory Journal</div>
                               
                               {tripMemories[stop.stop_order]?.img && (
                                 <img src={tripMemories[stop.stop_order].img} alt="Memory" style={{ width: "100%", maxHeight: 180, objectFit: "cover", borderRadius: 8, marginBottom: 8 }} />
@@ -853,13 +853,13 @@ export default function TripsScreen({ active, showScreen }) {
                                 placeholder="Add a photo URL here (optional)..."
                                 value={tripMemories[stop.stop_order]?.img || ""}
                                 onChange={e => setTripMemories(prev => ({...prev, [stop.stop_order]: { ...prev[stop.stop_order], img: e.target.value }}))}
-                                style={{ width: "100%", padding: "8px 10px", borderRadius: 6, border: "1px solid var(--gray-200)", fontSize: 12, marginBottom: 8, outline: "none" }}
+                                style={{ width: "100%", padding: "8px 10px", borderRadius: 6, border: "1px solid var(--gray-200)", fontSize: 12, marginBottom: 8, outline: "none", background: "var(--white)", color: "var(--text)" }}
                               />
                               <textarea
                                 placeholder="What did you experience here? Write your thoughts..."
                                 value={tripMemories[stop.stop_order]?.note || ""}
                                 onChange={e => setTripMemories(prev => ({...prev, [stop.stop_order]: { ...prev[stop.stop_order], note: e.target.value }}))}
-                                style={{ width: "100%", padding: "8px 10px", borderRadius: 6, border: "1px solid var(--gray-200)", fontSize: 12, minHeight: 60, resize: "vertical", outline: "none" }}
+                                style={{ width: "100%", padding: "8px 10px", borderRadius: 6, border: "1px solid var(--gray-200)", fontSize: 12, minHeight: 60, resize: "vertical", outline: "none", background: "var(--white)", color: "var(--text)" }}
                               />
                               <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 8 }}>
                                 <button 

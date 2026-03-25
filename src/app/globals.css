@@ -32,6 +32,8 @@ html.dark {
     --gray-600: #c3d4d9;
     --gray-800: #eaf2f4;
     --text: #eef5f7;
+    --teal-light: #173138;
+    --teal-dark: #6be5cf;
     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
     --shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
     --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.55);

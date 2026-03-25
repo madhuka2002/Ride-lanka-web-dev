@@ -7,21 +7,13 @@ export default function Sidebar({
   logoIcon = "🌊",
   logoText = "Ride",
   logoEm = "Lanka",
-  userName = "Sithil Semitha",
-  userRole = "Trip planner for Sri Lanka",
+  userName = "",
+  userRole = "",
   onNavigate,
 }) {
   const { t } = useSettings();
   const { isGuideMode } = useAppMode();
 
-  const resolvedUserRole =
-    userRole === "Trip planner for Sri Lanka"
-      ? t("appRoleTripPlanner")
-      : userRole === "Explorer · Pro"
-        ? t("appRoleExplorerPro")
-        : userRole === "Tour guide"
-          ? t("appRoleTourGuide")
-          : userRole;
 
   const nav = (screen, params) => (e) => {
     e?.preventDefault?.();
@@ -39,7 +31,7 @@ export default function Sidebar({
           </span>
         </div>
         <div className="nav-section">
-          <div className="nav-label">{t("navGuidePortal")}</div>
+          <div className="nav-label">{t("navGuidePortalLabel")}</div>
           <div
             className={`nav-item ${activeItem === "guide-dashboard" ? "active" : ""}`}
             onClick={nav("screen-guide-hub", { guideHubTab: "profile" })}
@@ -54,7 +46,7 @@ export default function Sidebar({
             role="button"
             tabIndex={0}
           >
-            <span className="icon">📬</span> {t("navGuideBookingRequests")}
+            <span className="icon">📬</span> {t("navGuideBookings")}
           </div>
           <div
             className={`nav-item ${activeItem === "guide-stories" ? "active" : ""}`}
@@ -62,11 +54,11 @@ export default function Sidebar({
             role="button"
             tabIndex={0}
           >
-            <span className="icon">✍️</span> {t("navGuideStories") || "Stories / Blog Posts"}
+            <span className="icon">✍️</span> {t("navGuideStories")}
           </div>
         </div>
         <div className="nav-section" style={{ marginTop: 12 }}>
-          <div className="nav-label">{t("navAccount")}</div>
+          <div className="nav-label">{t("navAccountLabel")}</div>
           <div
             className={`nav-item ${activeItem === "profile" ? "active" : ""}`}
             onClick={nav("screen-profile")}
@@ -94,10 +86,8 @@ export default function Sidebar({
         </div>
         <div className="sidebar-bottom">
           <div className="sidebar-user">
-            <div className="avatar">{userName.slice(0, 2).toUpperCase()}</div>
             <div className="user-info">
-              <div className="name">{userName}</div>
-              <div className="role">{resolvedUserRole}</div>
+              <div className="name">{isGuideMode ? t("appRoleTourGuide") : t("appRoleTripPlanner")}</div>
             </div>
           </div>
         </div>
@@ -133,6 +123,14 @@ export default function Sidebar({
           <span className="icon">🧭</span> {t("navExplore")}
         </div>
         <div
+          className={`nav-item ${activeItem === "discovery-hub" ? "active" : ""}`}
+          onClick={nav("screen-discovery-hub")}
+          role="button"
+          tabIndex={0}
+        >
+          <span className="icon">🔭</span> {t("navDiscoveryHub")}
+        </div>
+        <div
           className={`nav-item ${activeItem === "tour-guides" ? "active" : ""}`}
           onClick={nav("screen-tour-guides")}
           role="button"
@@ -142,7 +140,7 @@ export default function Sidebar({
         </div>
       </div>
       <div className="nav-section" style={{ marginTop: 12 }}>
-        <div className="nav-label">{t("navTrips")}</div>
+        <div className="nav-label">{t("navTripsLabel")}</div>
         <div
           className={`nav-item ${activeItem === "trips" ? "active" : ""}`}
           onClick={nav("screen-trips")}
@@ -161,7 +159,7 @@ export default function Sidebar({
         </div>
       </div>
       <div className="nav-section" style={{ marginTop: 12 }}>
-        <div className="nav-label">{t("navAccount")}</div>
+        <div className="nav-label">{t("navAccountLabel")}</div>
         <div
           className={`nav-item ${activeItem === "profile" ? "active" : ""}`}
           onClick={nav("screen-profile")}
@@ -189,10 +187,8 @@ export default function Sidebar({
       </div>
       <div className="sidebar-bottom">
         <div className="sidebar-user">
-          <div className="avatar">{userName.slice(0, 2).toUpperCase()}</div>
           <div className="user-info">
-            <div className="name">{userName}</div>
-            <div className="role">{resolvedUserRole}</div>
+            <div className="name">{isGuideMode ? t("appRoleTourGuide") : t("appRoleTripPlanner")}</div>
           </div>
         </div>
       </div>
